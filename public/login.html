@@ -174,16 +174,13 @@
                 if (mode === 'login') {
                     window.location.href = '/dashboard';
                 } else {
-                    successMessage.textContent = 'Account created successfully! Switching to sign in...';
+                    successMessage.textContent = 'Account created successfully! Logging you in...';
                     successMessage.style.display = 'block';
                     usernameInput.value = '';
                     passwordInput.value = '';
-                    if (typeof turnstile !== 'undefined') {
-                        turnstile.reset();
-                    }
                     setTimeout(() => {
-                        tabLogin.click();
-                    }, 1500);
+                        window.location.href = '/dashboard';
+                    }, 1000);
                 }
             } catch (err) {
                 errorMessage.textContent = err.message;

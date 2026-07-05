@@ -119,6 +119,23 @@ func HandleRegister(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Generate session ID for auto-login
+	sessionID := GenerateSessionID()
+
+	sessionsMutex.Lock()
+	sessions[sessionID] = userID
+	sessionsMutex.Unlock()
+
+	// Set cookie
+	http.SetCookie(w, &http.Cookie{
+		Name:     "session_id",
+		Value:    sessionID,
+		Path:     "/",
+		Expires:  time.Now().Add(24 * time.Hour),
+		HttpOnly: true,
+		SameSite: http.SameSiteLaxMode,
+	})
+
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(map[string]string{"message": "Registration successful"})
 }

@@ -167,13 +167,22 @@ document.addEventListener('DOMContentLoaded', () => {
             const captchaContainer = document.getElementById('captcha-container');
             if (res.ok) {
                 const user = await res.json();
-                userDisplay.textContent = `@${user.username}`;
-                userDisplay.style.display = 'inline-block';
-                dashboardLink.style.display = 'inline-block';
-                logoutBtn.style.display = 'inline-block';
-                authBtn.style.display = 'none';
-                if (registerBtn) registerBtn.style.display = 'none';
-                if (captchaContainer) captchaContainer.style.display = 'none';
+                if (user.authenticated) {
+                    userDisplay.textContent = `@${user.username}`;
+                    userDisplay.style.display = 'inline-block';
+                    dashboardLink.style.display = 'inline-block';
+                    logoutBtn.style.display = 'inline-block';
+                    authBtn.style.display = 'none';
+                    if (registerBtn) registerBtn.style.display = 'none';
+                    if (captchaContainer) captchaContainer.style.display = 'none';
+                } else {
+                    userDisplay.style.display = 'none';
+                    dashboardLink.style.display = 'none';
+                    logoutBtn.style.display = 'none';
+                    authBtn.style.display = 'inline-flex';
+                    if (registerBtn) registerBtn.style.display = 'inline-flex';
+                    if (captchaContainer) captchaContainer.style.display = 'flex';
+                }
             } else {
                 userDisplay.style.display = 'none';
                 dashboardLink.style.display = 'none';

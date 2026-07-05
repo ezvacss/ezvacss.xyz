@@ -24,11 +24,14 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const userRes = await fetch('/api/user');
             if (!userRes.ok) {
-                
                 window.location.href = '/login';
                 return;
             }
             const user = await userRes.json();
+            if (!user.authenticated) {
+                window.location.href = '/login';
+                return;
+            }
             
             
             const userDisplay = document.getElementById('user-display');

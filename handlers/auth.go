@@ -238,9 +238,12 @@ func HandleUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	w.Header().Set("Content-Type", "application/json")
 	userID := GetUserIDFromRequest(r)
 	if userID == 0 {
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"authenticated": false,
+		})
 		return
 	}
 
@@ -248,17 +251,17 @@ func HandleUser(w http.ResponseWriter, r *http.Request) {
 	var username string
 	err := db.Pool.QueryRow(ctx, "SELECT username FROM users WHERE id = $1", userID).Scan(&username)
 	if err != nil {
-		http.Error(w, "User not found", http.StatusNotFound)
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"authenticated": false,
+		})
 		return
 	}
 
-	resp := UserResponse{
-		ID:       userID,
-		Username: username,
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(resp)
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"authenticated": true,
+		"id":            userID,
+		"username":      username,
+	})
 }
 
 func GetUserIDFromRequest(r *http.Request) int {

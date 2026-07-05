@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"os"
 	"strings"
 	"time"
 
@@ -423,8 +424,42 @@ func HandleUnshorten(w http.ResponseWriter, r *http.Request) {
 }
 
 type ReportRequest struct {
-	Code   string `json:"code"`
-	Reason string `json:"reason"`
+	Code           string `json:"code"`
+	Reason         string `json:"reason"`
+	ReporterName   string `json:"reporter_name"`
+	ReporterEmail  string `json:"reporter_email"`
+	ReportType     string `json:"report_type"`
+	TurnstileToken string `json:"turnstile_token"`
+}
+
+// VerifyTurnstileToken validates the Cloudflare Turnstile token with Cloudflare API.
+func VerifyTurnstileToken(token, clientIP string) (bool, error) {
+	secret := os.Getenv("TURNSTILE_SECRET_KEY")
+	if secret == "" {
+		log.Println("TURNSTILE_SECRET_KEY not set. Skipping Turnstile verification.")
+		return true, nil
+	}
+
+	resp, err := http.PostForm("https://challenges.cloudflare.com/turnstile/v0/siteverify", url.Values{
+		"secret":   {secret},
+		"response": {token},
+		"remoteip": {clientIP},
+	})
+	if err != nil {
+		return false, err
+	}
+	defer resp.Body.Close()
+
+	var result struct {
+		Success    bool     `json:"success"`
+		ErrorCodes []string `json:"error-codes"`
+	}
+
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		return false, err
+	}
+
+	return result.Success, nil
 }
 
 // HandleReport logs an abuse report for a malicious shortened URL.
@@ -440,8 +475,25 @@ func HandleReport(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if req.Code == "" || req.Reason == "" {
-		http.Error(w, "Code and reason are required", http.StatusBadRequest)
+	if req.Code == "" || req.Reason == "" || req.ReportType == "" {
+		http.Error(w, "Code, reason, and report type are required", http.StatusBadRequest)
+		return
+	}
+
+	// Verify Turnstile Captcha
+	ip := r.Header.Get("CF-Connecting-IP")
+	if ip == "" {
+		ip = r.Header.Get("X-Forwarded-For")
+	}
+	if ip == "" {
+		ip = r.RemoteAddr
+	}
+	ip = cleanIP(ip)
+
+	valid, err := VerifyTurnstileToken(req.TurnstileToken, ip)
+	if err != nil || !valid {
+		log.Printf("Captcha verification failed: valid=%t, err=%v", valid, err)
+		http.Error(w, "Captcha verification failed. Please try again.", http.StatusBadRequest)
 		return
 	}
 
@@ -456,22 +508,25 @@ func HandleReport(w http.ResponseWriter, r *http.Request) {
 
 	// Verify short URL exists
 	var exists bool
-	err := db.Pool.QueryRow(ctx, "SELECT EXISTS(SELECT 1 FROM urls WHERE short_code = $1)", code).Scan(&exists)
+	err = db.Pool.QueryRow(ctx, "SELECT EXISTS(SELECT 1 FROM urls WHERE short_code = $1)", code).Scan(&exists)
 	if err != nil || !exists {
 		http.Error(w, "Short URL not found", http.StatusNotFound)
 		return
 	}
 
-	// Insert report
+	// Insert report into Postgres
 	_, err = db.Pool.Exec(ctx, 
-		"INSERT INTO reports (short_code, reason) VALUES ($1, $2)", 
-		code, req.Reason)
+		"INSERT INTO reports (short_code, reason, reporter_name, reporter_email, report_type) VALUES ($1, $2, $3, $4, $5)", 
+		code, req.Reason, req.ReporterName, req.ReporterEmail, req.ReportType)
 	
 	if err != nil {
 		log.Printf("Failed to insert report: %v", err)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
+
+	// Send detailed email notification to admin (asynchronously)
+	SendDetailedReportEmail(code, req.Reason, req.ReporterName, req.ReporterEmail, req.ReportType)
 
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(map[string]string{"message": "Report submitted successfully"})

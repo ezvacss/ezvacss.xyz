@@ -23,6 +23,13 @@ services:
     environment:
       - DATABASE_URL=postgres://postgres:root@postgres:5432/postgres?sslmode=disable
       - PORT=8080
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
+      - ADMIN_EMAIL=${ADMIN_EMAIL}
+      - SENDER_EMAIL=${SENDER_EMAIL}
+      - TURNSTILE_SECRET_KEY=${TURNSTILE_SECRET_KEY}
     volumes:
       - "./public:/app/public"
     depends_on:

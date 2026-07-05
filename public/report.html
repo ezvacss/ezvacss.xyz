@@ -9,6 +9,7 @@
     <link rel="apple-touch-icon" href="/favicon.png">
     <link rel="stylesheet" href="/styles.css?v=2">
     
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
@@ -44,10 +45,42 @@
                     </div>
 
                     <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <label for="name-input" style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary);">Your Name (Optional)</label>
+                        <div class="input-group">
+                            <input type="text" id="name-input" placeholder="e.g., John Doe" autocomplete="off">
+                        </div>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <label for="email-input" style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary);">Your Email Address (Optional)</label>
+                        <div class="input-group">
+                            <input type="email" id="email-input" placeholder="e.g., john@example.com" autocomplete="off">
+                        </div>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <label for="type-select" style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary);">Abuse Type</label>
+                        <div class="input-group" style="padding: 0;">
+                            <select id="type-select" required style="width: 100%; background: transparent; border: none; outline: none; color: var(--text-primary); font-family: var(--font-sans); font-size: 1.05rem; padding: 1rem; -webkit-appearance: none; -moz-appearance: none; appearance: none;">
+                                <option value="phishing" style="background: var(--card-bg); color: var(--text-primary);">Phishing / Fraud</option>
+                                <option value="malware" style="background: var(--card-bg); color: var(--text-primary);">Malware / Virus</option>
+                                <option value="spam" style="background: var(--card-bg); color: var(--text-primary);">Spam / Ads</option>
+                                <option value="copyright" style="background: var(--card-bg); color: var(--text-primary);">Copyright / DMCA</option>
+                                <option value="other" style="background: var(--card-bg); color: var(--text-primary);">Other Abuse</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
                         <label for="reason-input" style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary);">Reason for Report</label>
                         <div class="input-group" style="padding: 0;">
-                            <textarea id="reason-input" placeholder="Please describe the abuse (phishing, malware, spam, etc.)" required style="width: 100%; min-height: 100px; background: transparent; border: none; outline: none; color: var(--text-primary); font-family: var(--font-sans); font-size: 1.05rem; padding: 1rem; resize: vertical;"></textarea>
+                            <textarea id="reason-input" placeholder="Please describe the abuse..." required style="width: 100%; min-height: 100px; background: transparent; border: none; outline: none; color: var(--text-primary); font-family: var(--font-sans); font-size: 1.05rem; padding: 1rem; resize: vertical;"></textarea>
                         </div>
+                    </div>
+
+                    
+                    <div style="display: flex; justify-content: center; margin: 0.5rem 0;">
+                        <div class="cf-turnstile" data-sitekey="1x00000000000000000000AA" data-theme="dark"></div>
                     </div>
 
                     <div id="error-message" style="display: none; color: var(--color-danger); font-size: 0.9rem; font-weight: 600;"></div>
@@ -77,6 +110,9 @@
     <script>
         const reportForm = document.getElementById('report-form');
         const codeInput = document.getElementById('code-input');
+        const nameInput = document.getElementById('name-input');
+        const emailInput = document.getElementById('email-input');
+        const typeSelect = document.getElementById('type-select');
         const reasonInput = document.getElementById('reason-input');
         const errorMessage = document.getElementById('error-message');
         const successMessage = document.getElementById('success-message');
@@ -89,8 +125,20 @@
 
             const code = codeInput.value.trim();
             const reason = reasonInput.value.trim();
+            const reporter_name = nameInput.value.trim();
+            const reporter_email = emailInput.value.trim();
+            const report_type = typeSelect.value;
+            
+            // Get Turnstile Captcha token
+            const turnstileResponse = document.querySelector('[name="cf-turnstile-response"]');
+            const turnstile_token = turnstileResponse ? turnstileResponse.value : '';
 
-            if (!code || !reason) return;
+            if (!code || !reason || !report_type) return;
+            if (!turnstile_token) {
+                errorMessage.textContent = 'Please complete the captcha verification.';
+                errorMessage.style.display = 'block';
+                return;
+            }
 
             const btnText = submitBtn.querySelector('span');
             btnText.textContent = 'Submitting...';
@@ -100,7 +148,14 @@
                 const response = await fetch('/api/report', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ code, reason })
+                    body: JSON.stringify({ 
+                        code, 
+                        reason, 
+                        reporter_name, 
+                        reporter_email, 
+                        report_type,
+                        turnstile_token
+                    })
                 });
 
                 if (!response.ok) {
@@ -112,9 +167,19 @@
                 successMessage.style.display = 'block';
                 codeInput.value = '';
                 reasonInput.value = '';
+                nameInput.value = '';
+                emailInput.value = '';
+                
+                if (typeof turnstile !== 'undefined') {
+                    turnstile.reset();
+                }
             } catch (err) {
                 errorMessage.textContent = err.message;
                 errorMessage.style.display = 'block';
+                
+                if (typeof turnstile !== 'undefined') {
+                    turnstile.reset();
+                }
             } finally {
                 btnText.textContent = 'Submit Report';
                 submitBtn.disabled = false;

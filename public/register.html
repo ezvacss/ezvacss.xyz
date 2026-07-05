@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Sign in to your ezvacss.xyz account to track shortened links and view dashboard analytics.">
-    <title>Sign In | ezvacss.xyz</title>
+    <meta name="description" content="Create a secure account on ezvacss.xyz to organize, custom-tag, and track your shortened URLs.">
+    <title>Create Account | ezvacss.xyz</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="apple-touch-icon" href="/favicon.png">
     <link rel="stylesheet" href="/styles.css?v=2">
@@ -28,13 +28,13 @@
         
         <div class="premium-card" style="box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3); border-color: rgba(228, 228, 231, 0.15); padding: 2.5rem 2rem;">
             
-            <h2 style="font-size: 1.75rem; font-weight: 800; text-transform: uppercase; margin-bottom: 0.5rem; letter-spacing: -0.03em; text-align: center;">Sign In</h2>
+            <h2 style="font-size: 1.75rem; font-weight: 800; text-transform: uppercase; margin-bottom: 0.5rem; letter-spacing: -0.03em; text-align: center;">Register</h2>
             
             <p style="color: var(--text-secondary); text-align: center; margin-bottom: 2rem; font-size: 0.9rem; line-height: 1.4;">
-                Sign in to manage your shortened links and view live analytics.
+                Create a secure account to organize, custom-tag, and track your shortened URLs.
             </p>
 
-            <form id="login-form" onsubmit="event.preventDefault();">
+            <form id="register-form" onsubmit="event.preventDefault();">
                 <div style="display: flex; flex-direction: column; gap: 1.25rem;">
                     
                     <div style="display: flex; flex-direction: column; gap: 0.5rem;">
@@ -43,7 +43,7 @@
                             <div class="input-icon-wrapper">
                                 <i data-lucide="user" style="width: 1.1rem; height: 1.1rem; color: var(--text-secondary);"></i>
                             </div>
-                            <input type="text" id="username-input" placeholder="Enter username" required autocomplete="username">
+                            <input type="text" id="username-input" placeholder="Choose a username" required autocomplete="username">
                         </div>
                     </div>
 
@@ -53,7 +53,17 @@
                             <div class="input-icon-wrapper">
                                 <i data-lucide="lock" style="width: 1.1rem; height: 1.1rem; color: var(--text-secondary);"></i>
                             </div>
-                            <input type="password" id="password-input" placeholder="Enter password" required autocomplete="current-password">
+                            <input type="password" id="password-input" placeholder="Create password (min 6 chars)" required autocomplete="new-password">
+                        </div>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <label for="confirm-password-input" style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary);">Confirm Password</label>
+                        <div class="input-group">
+                            <div class="input-icon-wrapper">
+                                <i data-lucide="lock-keyhole" style="width: 1.1rem; height: 1.1rem; color: var(--text-secondary);"></i>
+                            </div>
+                            <input type="password" id="confirm-password-input" placeholder="Confirm password" required autocomplete="new-password">
                         </div>
                     </div>
 
@@ -62,14 +72,15 @@
                     </div>
 
                     <div id="error-message" style="display: none; color: var(--color-danger); font-size: 0.9rem; font-weight: 600; line-height: 1.4;"></div>
+                    <div id="success-message" style="display: none; color: var(--color-success); font-size: 0.9rem; font-weight: 600; line-height: 1.4;"></div>
 
-                    <button type="submit" class="nav-btn" id="login-submit-btn" style="justify-content: center; width: 100%; padding: 0.8rem;">
-                        <span>Sign In</span>
+                    <button type="submit" class="nav-btn" id="register-submit-btn" style="justify-content: center; width: 100%; padding: 0.8rem;">
+                        <span>Register Account</span>
                     </button>
 
                     <div style="text-align: center; margin-top: 1rem; font-size: 0.9rem;">
-                        <span style="color: var(--text-secondary);">Don't have an account? </span>
-                        <a href="/register" style="color: var(--text-primary); font-weight: 700; text-decoration: none; border-bottom: 1px solid var(--text-primary); padding-bottom: 2px;">Create account</a>
+                        <span style="color: var(--text-secondary);">Already have an account? </span>
+                        <a href="/login" style="color: var(--text-primary); font-weight: 700; text-decoration: none; border-bottom: 1px solid var(--text-primary); padding-bottom: 2px;">Sign In</a>
                     </div>
 
                 </div>
@@ -90,24 +101,41 @@
     </footer>
 
     <script>
-        const loginForm = document.getElementById('login-form');
+        const registerForm = document.getElementById('register-form');
         const usernameInput = document.getElementById('username-input');
         const passwordInput = document.getElementById('password-input');
+        const confirmPasswordInput = document.getElementById('confirm-password-input');
         const errorMessage = document.getElementById('error-message');
-        const submitBtn = document.getElementById('login-submit-btn');
+        const successMessage = document.getElementById('success-message');
+        const submitBtn = document.getElementById('register-submit-btn');
 
-        loginForm.addEventListener('submit', async (e) => {
+        registerForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             errorMessage.style.display = 'none';
+            successMessage.style.display = 'none';
 
             const username = usernameInput.value.trim();
             const password = passwordInput.value;
+            const confirmPassword = confirmPasswordInput.value;
 
             // Get Turnstile token
             const turnstileResponse = document.querySelector('[name="cf-turnstile-response"]');
             const turnstile_token = turnstileResponse ? turnstileResponse.value : '';
 
-            if (!username || !password) return;
+            if (!username || !password || !confirmPassword) return;
+
+            if (password !== confirmPassword) {
+                errorMessage.textContent = 'Passwords do not match.';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            if (password.length < 6) {
+                errorMessage.textContent = 'Password must be at least 6 characters long.';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
             if (!turnstile_token) {
                 errorMessage.textContent = 'Please complete the captcha verification.';
                 errorMessage.style.display = 'block';
@@ -115,11 +143,11 @@
             }
 
             const btnText = submitBtn.querySelector('span');
-            btnText.textContent = 'Authenticating...';
+            btnText.textContent = 'Registering...';
             submitBtn.disabled = true;
 
             try {
-                const response = await fetch('/api/login', {
+                const response = await fetch('/api/register', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ username, password, turnstile_token })
@@ -127,10 +155,18 @@
 
                 if (!response.ok) {
                     const text = await response.text();
-                    throw new Error(text || 'Authentication failed');
+                    throw new Error(text || 'Registration failed');
                 }
 
-                window.location.href = '/dashboard';
+                successMessage.textContent = 'Account created successfully! Logging you in...';
+                successMessage.style.display = 'block';
+                usernameInput.value = '';
+                passwordInput.value = '';
+                confirmPasswordInput.value = '';
+
+                setTimeout(() => {
+                    window.location.href = '/dashboard';
+                }, 1000);
             } catch (err) {
                 errorMessage.textContent = err.message;
                 errorMessage.style.display = 'block';
@@ -138,7 +174,7 @@
                     turnstile.reset();
                 }
             } finally {
-                btnText.textContent = 'Sign In';
+                btnText.textContent = 'Register Account';
                 submitBtn.disabled = false;
             }
         });

@@ -69,6 +69,12 @@ func main() {
 			return
 		}
 
+		// Serve register.html for /register
+		if path == "/register" || path == "/register/" {
+			http.ServeFile(w, r, "./public/register.html")
+			return
+		}
+
 		// Serve privacy.html for /privacy
 		if path == "/privacy" || path == "/privacy/" {
 			http.ServeFile(w, r, "./public/privacy.html")

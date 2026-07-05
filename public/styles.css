@@ -1,15 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-    --bg-primary: #18181b;      /* Softer zinc dark */
-    --bg-secondary: #202024;    /* Softer container dark */
-    --card-bg: #27272a;         /* Zinc gray card */
-    --card-border: #3f3f46;     /* Softer zinc border */
-    --card-hover-border: #71717a; /* Medium zinc border */
+    --bg-primary: #18181b;      
+    --bg-secondary: #202024;    
+    --card-bg: #27272a;         
+    --card-border: #3f3f46;     
+    --card-hover-border: #71717a; 
     
-    --text-primary: #f4f4f5;    /* Softer white */
-    --text-secondary: #a1a1aa;  /* Muted warm gray */
-    --text-muted: #52525b;      /* Darker gray */
+    --text-primary: #f4f4f5;    
+    --text-secondary: #a1a1aa;  
+    --text-muted: #52525b;      
     
     --color-primary: #e4e4e7;   
     --color-secondary: #a1a1aa;
@@ -43,7 +43,7 @@ body {
     overflow-x: hidden;
 }
 
-/* Nav Bar */
+
 header.app-header {
     border-bottom: 2px solid var(--card-border);
     background: var(--bg-secondary);
@@ -127,7 +127,7 @@ header.app-header {
     color: var(--text-primary);
 }
 
-/* Main Container */
+
 main.main-content {
     flex: 1;
     max-width: 800px;
@@ -139,7 +139,7 @@ main.main-content {
     justify-content: center;
 }
 
-/* Hero Section */
+
 .hero-section {
     text-align: left;
     margin-bottom: 2.5rem;
@@ -165,7 +165,7 @@ main.main-content {
     line-height: 1.5;
 }
 
-/* Brutalist Card - Softer Borders */
+
 .premium-card {
     background: var(--card-bg);
     border: 2px solid var(--card-border);
@@ -173,7 +173,7 @@ main.main-content {
     position: relative;
 }
 
-/* Shortener Box */
+
 .shortener-box {
     width: 100%;
 }
@@ -236,7 +236,7 @@ main.main-content {
     background: var(--bg-primary);
 }
 
-/* Results Box */
+
 .results-box {
     margin-top: 1.5rem;
     display: none;
@@ -346,7 +346,7 @@ main.main-content {
     color: var(--text-secondary);
 }
 
-/* CEO Dashboard Grid */
+
 .dashboard-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -394,7 +394,7 @@ main.main-content {
     color: var(--text-secondary);
 }
 
-/* Dashboard layout sections */
+
 .dashboard-sections {
     display: grid;
     grid-template-columns: 2fr 1fr;
@@ -477,7 +477,7 @@ table.analytics-table td {
     border: 1px solid var(--card-border);
 }
 
-/* Footer */
+
 footer.app-footer {
     border-top: 2px solid var(--card-border);
     background: var(--bg-secondary);
@@ -488,7 +488,7 @@ footer.app-footer {
     margin-top: auto;
 }
 
-/* Responsive */
+
 @media (max-width: 1024px) {
     .dashboard-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -516,7 +516,7 @@ footer.app-footer {
         grid-template-columns: 1fr;
     }
 
-    /* Stack Nav Container on mobile to prevent overlapping */
+    
     .nav-container {
         flex-direction: column;
         gap: 0.75rem;
@@ -531,7 +531,7 @@ footer.app-footer {
         flex-wrap: wrap;
     }
 
-    /* Convert wide table into vertical cards for mobile view */
+    
     table.analytics-table, 
     table.analytics-table thead, 
     table.analytics-table tbody, 

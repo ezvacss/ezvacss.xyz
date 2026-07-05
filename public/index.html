@@ -10,12 +10,12 @@
     <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="apple-touch-icon" href="/favicon.png">
     <link rel="stylesheet" href="/styles.css?v=2">
-    <!-- Lucide Icons CDN -->
+    
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
 
-    <!-- Header Navigation -->
+    
     <header class="app-header">
         <nav class="nav-container">
             <a href="/" class="logo-link" id="logo-nav-link">
@@ -32,10 +32,10 @@
         </nav>
     </header>
 
-    <!-- Main Content Area -->
+    
     <main class="main-content">
         
-        <!-- Hero Section -->
+        
         <section class="hero-section">
             <h1 class="hero-title" id="main-hero-title">Instant URL <span>Shortener</span></h1>
             <p class="hero-subtitle" id="main-hero-subtitle">
@@ -43,7 +43,7 @@
             </p>
         </section>
 
-        <!-- Shortener Box -->
+        
         <section class="shortener-box">
             <div class="premium-card">
                 <form id="shorten-form" onsubmit="event.preventDefault();">
@@ -56,13 +56,13 @@
                     </div>
                 </form>
 
-                <!-- Error Message (Hidden Initially) -->
+                
                 <div id="error-message" style="display: none; color: var(--color-danger); background: rgba(239, 68, 68, 0.05); border: 2px solid var(--color-danger); padding: 1rem; margin-top: 1rem; font-size: 0.95rem; font-weight: 700; line-height: 1.4;">
                     <i data-lucide="alert-triangle" style="width: 1.1rem; height: 1.1rem; vertical-align: middle; margin-right: 0.25rem; display: inline-block;"></i>
                     <span id="error-message-text">Invalid URL format. Please enter a valid web address.</span>
                 </div>
 
-                <!-- Results Area (Hidden Initially) -->
+                
                 <div class="results-box" id="results-box-container">
                     <div class="result-card">
                         <div class="result-header">
@@ -89,7 +89,7 @@
                             </div>
                         </div>
 
-                        <!-- QR Code and Share info -->
+                        
                         <div class="qr-section">
                             <img src="" alt="QR Code" class="qr-code-img" id="qr-code-image">
                             <div class="qr-info">
@@ -102,7 +102,7 @@
             </div>
         </section>
 
-        <!-- SEO Informative Content Section -->
+        
         <section class="info-section" style="margin-top: 4rem; border-top: 2px solid var(--card-border); padding-top: 3rem;">
             <h2 style="font-size: 1.75rem; font-weight: 800; text-transform: uppercase; margin-bottom: 1.5rem; letter-spacing: -0.03em;">About Our Instant URL Shortener</h2>
             
@@ -129,7 +129,7 @@
 
     </main>
 
-    <!-- Footer -->
+    
     <footer class="app-footer">
         <div style="display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
             <a href="/unshorten" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 600;">Unshorten Link</a>
@@ -141,7 +141,7 @@
         <p>&copy; 2026 ezvacss.xyz. Minimalist link utility.</p>
     </footer>
 
-    <!-- Frontend logic script -->
+    
     <script src="/app.js"></script>
     <script>
         // Initialize Lucide icons

@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const copyBtnIcon = document.getElementById('copy-btn-icon');
     const qrCodeImage = document.getElementById('qr-code-image');
 
-    // Error block DOM elements
+    
     const errorMessage = document.getElementById('error-message');
     const errorMessageText = document.getElementById('error-message-text');
 
@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Handle form submit
+    
     shortenForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         hideError();
@@ -37,9 +37,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const originalUrl = urlInput.value.trim();
         if (!originalUrl) return;
 
-        // Validate URL format
+        
         let testStr = originalUrl;
-        if (!/^https?:\/\//i.test(testStr)) {
+        if (!/^https?:\/\
             testStr = 'http://' + testStr;
         }
         let parsedUrl;
@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Update button state (loading)
+        
         const btnText = shortenBtn.querySelector('span');
         const btnIcon = shortenBtn.querySelector('i');
         const originalBtnText = btnText.textContent;
@@ -84,40 +84,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const data = await response.json();
             
-            // Render results
+            
             originalUrlText.textContent = originalUrl;
             shortenedUrlText.textContent = data.short_url;
             shortenedUrlText.href = data.short_url;
 
-            // Generate QR Code URL
-            // Using a reliable public QR Code generator API
+            
+            
             const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(data.short_url)}`;
             qrCodeImage.src = qrApiUrl;
 
-            // Display results container
+            
             resultsBox.style.display = 'block';
             resultsBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
-            // Clear input
+            
             urlInput.value = '';
 
         } catch (error) {
             console.error('Error:', error);
             showError(error.message || 'Something went wrong. Please check your internet connection or try again.');
         } finally {
-            // Restore button state
+            
             btnText.textContent = originalBtnText;
             shortenBtn.disabled = false;
         }
     });
 
-    // Handle Copy to Clipboard
+    
     copyUrlBtn.addEventListener('click', async () => {
         const urlToCopy = shortenedUrlText.textContent;
         try {
             await navigator.clipboard.writeText(urlToCopy);
             
-            // Visual feedback: checkmark icon
+            
             copyBtnIcon.setAttribute('data-lucide', 'check');
             copyUrlBtn.style.borderColor = 'var(--color-success)';
             copyUrlBtn.style.color = 'var(--color-success)';
@@ -135,7 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Check user auth state
+    
     async function checkAuth() {
         const userDisplay = document.getElementById('user-display');
         const dashboardLink = document.getElementById('dashboard-link');
@@ -170,7 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Handle logout click
+    
     const logoutBtn = document.getElementById('logout-btn');
     if (logoutBtn) {
         logoutBtn.addEventListener('click', async () => {
@@ -185,6 +185,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Run auth check on load
+    
     checkAuth();
 });

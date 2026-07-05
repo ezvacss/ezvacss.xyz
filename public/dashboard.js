@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // DOM elements
+    
     const refreshBtn = document.getElementById('refresh-stats-btn');
     const refreshIcon = document.getElementById('refresh-icon');
     const statLinks = document.getElementById('stat-value-links');
@@ -9,28 +9,28 @@ document.addEventListener('DOMContentLoaded', () => {
     const logsTableBody = document.getElementById('logs-table-body');
     const searchInput = document.getElementById('log-search-input');
 
-    // Chart variables
+    
     let clicksChart = null;
     let deviceChart = null;
-    let allLogs = []; // Cache logs for live searching
-    let filteredLogs = []; // Stores currently active filtered/unfiltered logs
+    let allLogs = []; 
+    let filteredLogs = []; 
     let currentPage = 1;
     const rowsPerPage = 10;
 
-    // Fetch and populate metrics
+    
     async function loadMetrics() {
 
         try {
-            // First check user auth
+            
             const userRes = await fetch('/api/user');
             if (!userRes.ok) {
-                // Not logged in, redirect to login
+                
                 window.location.href = '/login';
                 return;
             }
             const user = await userRes.json();
             
-            // Show username and logout
+            
             const userDisplay = document.getElementById('user-display');
             const logoutBtn = document.getElementById('logout-btn');
             if (userDisplay) {
@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
             filteredLogs = allLogs;
             currentPage = 1;
 
-            // 1. Set text stats
+            
             statLinks.textContent = data.total_links || 0;
             statClicks.textContent = data.total_clicks || 0;
             
@@ -64,10 +64,10 @@ document.addEventListener('DOMContentLoaded', () => {
             statAvg.textContent = avg.toFixed(1);
             statLogs.textContent = allLogs.length;
 
-            // 2. Render Charts
+            
             renderCharts(data.links || []);
 
-            // 3. Render Table
+            
             renderLogsTable(filteredLogs);
 
         } catch (error) {
@@ -82,16 +82,16 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
             lucide.createIcons();
         } finally {
-            // No animation logic required
+            
         }
     }
 
-    // Helper to parse user agent
+    
     function getBrowserInfo(ua) {
         if (!ua) return 'Unknown / Script';
         const uaLower = ua.toLowerCase();
         
-        // Basic detection
+        
         let browser = 'Other Browser';
         let platform = 'Desktop';
 
@@ -108,14 +108,14 @@ document.addEventListener('DOMContentLoaded', () => {
         return { browser, platform };
     }
 
-    // Render Charts
+    
     function renderCharts(linksData) {
-        // Destroy existing charts if any (prevents overlays on resize or refresh)
+        
         if (clicksChart) clicksChart.destroy();
         if (deviceChart) deviceChart.destroy();
 
-        // --- 1. Bar Chart: Clicks per Link ---
-        const topLinks = linksData.slice(0, 10); // Show top 10
+        
+        const topLinks = linksData.slice(0, 10); 
         const barLabels = topLinks.map(l => `/${l.short_code}`);
         const barData = topLinks.map(l => l.clicks);
 
@@ -153,7 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // --- 2. Doughnut Chart: Device Platforms ---
+        
         let mobileCount = 0;
         let desktopCount = 0;
 
@@ -165,9 +165,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Fallback default values if no redirect logs exist yet
+        
         if (mobileCount === 0 && desktopCount === 0) {
-            desktopCount = 1; // Default spacer
+            desktopCount = 1; 
         }
 
         const ctxDoughnut = document.getElementById('deviceChart').getContext('2d');
@@ -196,9 +196,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Geolocation is resolved server-side on the Go backend to prevent CORS issues.
+    
 
-    // Render Logs Table
+    
     function renderLogsTable(logsList) {
         const prevBtn = document.getElementById('prev-page-btn');
         const nextBtn = document.getElementById('next-page-btn');
@@ -231,13 +231,13 @@ document.addEventListener('DOMContentLoaded', () => {
         logsTableBody.innerHTML = paginatedLogs.map(log => {
             const formattedTime = new Date(log.created_at).toLocaleString();
             
-            // Format action badge style
+            
             let actionBadgeStyle = 'color: var(--color-primary); background: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.2);';
             if (log.action === 'redirect') {
                 actionBadgeStyle = 'color: var(--color-success); background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2);';
             }
 
-            // Extract browser/OS info
+            
             const uaInfo = getBrowserInfo(log.user_agent);
             const userAgentString = typeof uaInfo === 'object' ? `${uaInfo.browser} (${uaInfo.platform})` : uaInfo;
 
@@ -261,7 +261,7 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         }).join('');
 
-        // Update button states
+        
         if (prevBtn) prevBtn.disabled = currentPage === 1;
         if (nextBtn) nextBtn.disabled = currentPage === totalPages || totalPages === 0;
         if (pageInfo) pageInfo.textContent = `Page ${currentPage} of ${totalPages || 1}`;
@@ -269,7 +269,7 @@ document.addEventListener('DOMContentLoaded', () => {
         lucide.createIcons();
     }
 
-    // Setup search filter
+    
     searchInput.addEventListener('input', (e) => {
         const query = e.target.value.toLowerCase().trim();
         if (!query) {
@@ -293,7 +293,7 @@ document.addEventListener('DOMContentLoaded', () => {
         renderLogsTable(filteredLogs);
     });
 
-    // Pagination Listeners
+    
     const prevPageBtn = document.getElementById('prev-page-btn');
     if (prevPageBtn) {
         prevPageBtn.addEventListener('click', () => {
@@ -315,17 +315,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Auto load on init
+    
     loadMetrics();
 
-    // Attach refresh button click (reloads page instantly without animations)
+    
     if (refreshBtn) {
         refreshBtn.addEventListener('click', () => {
             window.location.reload();
         });
     }
 
-    // Handle logout click
+    
     const logoutBtn = document.getElementById('logout-btn');
     if (logoutBtn) {
         logoutBtn.addEventListener('click', async () => {

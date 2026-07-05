@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Unshorten URL tool. Preview the original destination and creation date of any short link safely before redirecting. Protect yourself from scams.">
+    <title>Unshorten URL & Link Safety Checker | ezvacss.xyz</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="apple-touch-icon" href="/favicon.png">
+    <link rel="stylesheet" href="/styles.css?v=2">
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header class="app-header">
+        <nav class="nav-container">
+            <a href="/" class="logo-link" id="logo-nav-link">
+                <i data-lucide="zap" class="logo-icon"></i>
+                <span class="logo-text">ezvacss.xyz</span>
+            </a>
+            <div class="nav-menu" id="nav-menu-bar">
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="main-content" style="max-width: 500px;">
+        <section class="hero-section">
+            <h1 class="hero-title" style="font-size: 2.5rem;">Unshorten <span>URL</span></h1>
+            <p class="hero-subtitle">Preview the destination of any short link safely before clicking it.</p>
+        </section>
+
+        <section class="premium-card">
+            <form id="unshorten-form" onsubmit="event.preventDefault();">
+                <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+                    
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <label for="code-input" style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary);">Short URL or Code</label>
+                        <div class="input-group">
+                            <input type="text" id="code-input" placeholder="e.g., eVyOGhR or https://ezvacss.xyz/eVyOGhR" required autocomplete="off">
+                        </div>
+                    </div>
+
+                    <div id="error-message" style="display: none; color: var(--color-danger); font-size: 0.9rem; font-weight: 600;"></div>
+
+                    <button type="submit" class="nav-btn" id="unshorten-submit-btn" style="justify-content: center; width: 100%; padding: 0.8rem;">
+                        <span>Preview Destination</span>
+                    </button>
+
+                </div>
+            </form>
+
+            <!-- Preview Result (Hidden Initially) -->
+            <div class="results-box" id="preview-result-container" style="margin-top: 1.5rem; display: none;">
+                <div class="result-card" style="border: 2px solid var(--text-secondary);">
+                    <div class="result-header">
+                        <span class="result-title">Link Analysis Result</span>
+                        <i data-lucide="shield-alert" style="color: var(--color-warning);"></i>
+                    </div>
+
+                    <div class="result-urls">
+                        <div>
+                            <span class="url-label">Destination URL</span>
+                            <div class="url-value-container">
+                                <a href="#" target="_blank" class="url-value" id="destination-url-text" style="color: var(--color-success); font-weight: 700;">https://example.com</a>
+                            </div>
+                        </div>
+
+                        <div>
+                            <span class="url-label">Created At</span>
+                            <div class="url-value-container">
+                                <span class="url-value original" id="created-date-text">July 4, 2026</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="background: rgba(245, 158, 11, 0.05); border: 1px solid rgba(245, 158, 11, 0.2); padding: 1rem; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">
+                        <strong style="color: var(--color-warning); text-transform: uppercase; display: block; margin-bottom: 0.25rem;">Security Warning:</strong>
+                        Ensure you trust the destination domain above before visiting it. Do not input passwords or personal info if the site appears suspicious.
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <div style="display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
+            <a href="/unshorten" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 600;">Unshorten Link</a>
+            <a href="/report" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 600;">Report Abuse</a>
+            <a href="/contact" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 600;">Contact</a>
+            <a href="/privacy" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 600;">Privacy</a>
+            <a href="/tos" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 600;">Terms</a>
+        </div>
+        <p>&copy; 2026 ezvacss.xyz. Minimalist link utility.</p>
+    </footer>
+
+    <script>
+        const unshortenForm = document.getElementById('unshorten-form');
+        const codeInput = document.getElementById('code-input');
+        const errorMessage = document.getElementById('error-message');
+        const previewContainer = document.getElementById('preview-result-container');
+        const destinationUrlText = document.getElementById('destination-url-text');
+        const createdDateText = document.getElementById('created-date-text');
+        const submitBtn = document.getElementById('unshorten-submit-btn');
+
+        unshortenForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            errorMessage.style.display = 'none';
+            previewContainer.style.display = 'none';
+
+            const code = codeInput.value.trim();
+            if (!code) return;
+
+            const btnText = submitBtn.querySelector('span');
+            btnText.textContent = 'Analyzing...';
+            submitBtn.disabled = true;
+
+            try {
+                const response = await fetch(`/api/unshorten?code=${encodeURIComponent(code)}`);
+
+                if (!response.ok) {
+                    const text = await response.text();
+                    throw new Error(text || 'Short URL not found');
+                }
+
+                const data = await response.json();
+                
+                destinationUrlText.textContent = data.original_url;
+                destinationUrlText.href = data.original_url;
+                createdDateText.textContent = new Date(data.created_at).toLocaleString();
+
+                previewContainer.style.display = 'block';
+            } catch (err) {
+                errorMessage.textContent = err.message;
+                errorMessage.style.display = 'block';
+            } finally {
+                btnText.textContent = 'Preview Destination';
+                submitBtn.disabled = false;
+            }
+        });
+
+        lucide.createIcons();
+    </script>
+</body>
+</html>

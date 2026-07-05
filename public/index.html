@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ezvacss.xyz - A minimal, security-focused, and lightning-fast link shortening service. Track clicks and analyze logs in real time.">
+    <meta name="keywords" content="url shortener, link shortener, analytics, link tracker, ezvacss.xyz">
+    <meta name="author" content="ezvacss.xyz Team">
+    <title>ezvacss.xyz | Fast & Secure URL Shortener</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="apple-touch-icon" href="/favicon.png">
+    <link rel="stylesheet" href="/styles.css?v=2">
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header class="app-header">
+        <nav class="nav-container">
+            <a href="/" class="logo-link" id="logo-nav-link">
+                <i data-lucide="zap" class="logo-icon"></i>
+                <span class="logo-text">ezvacss.xyz</span>
+            </a>
+            <div class="nav-menu" id="nav-menu-bar" style="opacity: 0; transition: opacity 0.1s ease;">
+                <span id="user-display" style="display: none; color: var(--text-secondary); font-size: 0.9rem; font-weight: 600;"></span>
+                <a href="/dashboard" class="nav-item" id="dashboard-link" style="display: none;">Dashboard</a>
+                <button class="nav-item" id="logout-btn" style="display: none; background: transparent; border: none; cursor: pointer;">Logout</button>
+                <a href="/login" class="nav-item" id="auth-btn" style="display: none;">Sign In</a>
+                <a href="/login?mode=register" class="nav-btn" id="register-nav-btn" style="display: none;">Register</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+        
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <h1 class="hero-title" id="main-hero-title">Instant URL <span>Shortener</span></h1>
+            <p class="hero-subtitle" id="main-hero-subtitle">
+                Paste your long URL to get a short link immediately. Simple, fast, and secure.
+            </p>
+        </section>
+
+        <!-- Shortener Box -->
+        <section class="shortener-box">
+            <div class="premium-card">
+                <form id="shorten-form" onsubmit="event.preventDefault();">
+                    <div class="input-group" id="url-input-container">
+                        <input type="text" id="url-input" placeholder="Paste your long URL here (e.g., https://example.com)" required autocomplete="off">
+                        <button type="submit" class="submit-btn" id="shorten-btn">
+                            <span>Shorten</span>
+                            <i data-lucide="arrow-right"></i>
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Error Message (Hidden Initially) -->
+                <div id="error-message" style="display: none; color: var(--color-danger); background: rgba(239, 68, 68, 0.05); border: 2px solid var(--color-danger); padding: 1rem; margin-top: 1rem; font-size: 0.95rem; font-weight: 700; line-height: 1.4;">
+                    <i data-lucide="alert-triangle" style="width: 1.1rem; height: 1.1rem; vertical-align: middle; margin-right: 0.25rem; display: inline-block;"></i>
+                    <span id="error-message-text">Invalid URL format. Please enter a valid web address.</span>
+                </div>
+
+                <!-- Results Area (Hidden Initially) -->
+                <div class="results-box" id="results-box-container">
+                    <div class="result-card">
+                        <div class="result-header">
+                            <span class="result-title">Short link created:</span>
+                            <i data-lucide="check-circle-2" style="color: var(--color-success);"></i>
+                        </div>
+                        
+                        <div class="result-urls">
+                            <div>
+                                <span class="url-label">Short Link</span>
+                                <div class="url-value-container">
+                                    <a href="#" target="_blank" class="url-value" id="shortened-url-text">http://localhost:8080/xyz</a>
+                                    <button class="copy-btn" id="copy-url-btn" title="Copy to clipboard">
+                                        <i data-lucide="copy" id="copy-btn-icon"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <span class="url-label">Original Link</span>
+                                <div class="url-value-container">
+                                    <span class="url-value original" id="original-url-text">https://example.com</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- QR Code and Share info -->
+                        <div class="qr-section">
+                            <img src="" alt="QR Code" class="qr-code-img" id="qr-code-image">
+                            <div class="qr-info">
+                                <h4>QR Code</h4>
+                                <p>Scan to redirect instantly.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEO Informative Content Section -->
+        <section class="info-section" style="margin-top: 4rem; border-top: 2px solid var(--card-border); padding-top: 3rem;">
+            <h2 style="font-size: 1.75rem; font-weight: 800; text-transform: uppercase; margin-bottom: 1.5rem; letter-spacing: -0.03em;">About Our Instant URL Shortener</h2>
+            
+            <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 1.5rem; font-size: 1rem;">
+                Welcome to <strong>ezvacss.xyz</strong>, your premium, secure, and instant URL shortener. A URL shortener is an essential web utility that converts long, complex web addresses into clean, manageable links. Long URLs are often difficult to share in emails, social media posts, and messages due to character limits and messy formatting. Our link shortener simplifies this process by condensing any web link into an easy-to-share short URL in just a fraction of a second.
+            </p>
+
+            <h3 style="font-size: 1.25rem; font-weight: 700; text-transform: uppercase; margin-bottom: 1rem; color: var(--text-primary);">Why Use a Secure Link Shortener?</h3>
+            
+            <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 1.5rem; font-size: 1rem;">
+                Using a short URL from ezvacss.xyz does more than just save space. It improves user experience and makes your links look clean and professional. When you shorten URLs with our service, you get access to instant redirects and safety checks. Many URL shorteners mask malicious sites, but we prioritize security. We offer an interactive unshorten preview tool so users can verify the original destination URL safely before being redirected.
+            </p>
+
+            <h3 style="font-size: 1.25rem; font-weight: 700; text-transform: uppercase; margin-bottom: 1rem; color: var(--text-primary);">Key Features of ezvacss.xyz</h3>
+            
+            <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 1.5rem; font-size: 1rem;">
+                Our platform is designed to be fast, simple, and fully transparent. First, we provide instant link creation without requiring any complex setup. Second, we automatically generate high-resolution QR codes for every shortened URL, making it incredibly simple for mobile users to scan and visit your links. Finally, we provide a robust, real-time analytics dashboard where registered users can track link clicks, referrers, and device breakdown logs securely.
+            </p>
+
+            <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 1.5rem; font-size: 1rem;">
+                Whether you are sharing a project repository, launching a marketing campaign, or just sending a link to a friend, ezvacss.xyz provides a reliable, secure, and permanent redirection service. Get started by pasting your long web link in the field above to generate your short URL instantly.
+            </p>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <div style="display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
+            <a href="/unshorten" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 600;">Unshorten Link</a>
+            <a href="/report" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 600;">Report Abuse</a>
+            <a href="/contact" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 600;">Contact</a>
+            <a href="/privacy" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 600;">Privacy</a>
+            <a href="/tos" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 600;">Terms</a>
+        </div>
+        <p>&copy; 2026 ezvacss.xyz. Minimalist link utility.</p>
+    </footer>
+
+    <!-- Frontend logic script -->
+    <script src="/app.js"></script>
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>

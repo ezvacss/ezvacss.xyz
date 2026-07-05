@@ -1,0 +1,26 @@
+# IDEs and editors
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Binaries / Executables
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+test_build
+test_build.exe
+
+# Database data directories
+postgres/data/
+
+# Environment files
+.env
+.env.local
+.env.production
+.env.development

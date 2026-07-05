@@ -1,0 +1,40 @@
+services:
+  postgres:
+    image: postgres:17.5
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+    volumes:
+      - "./postgres/data:/var/lib/postgresql/data"
+      - "./init-postgres.sql:/docker-entrypoint-initdb.d/init-postgres.sql"
+    logging:
+      driver: "json-file"
+      options:
+        tag: "{{.ImageName}}|{{.Name}}"
+        max-size: 256m
+
+  app:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - DATABASE_URL=postgres://postgres:root@postgres:5432/postgres?sslmode=disable
+      - PORT=8080
+    volumes:
+      - "./public:/app/public"
+    depends_on:
+      - postgres
+
+#   Optional: Expose your local server to ezvacss.xyz via Cloudflare Tunnel securely
+  tunnel:
+     image: cloudflare/cloudflared:latest
+     restart: unless-stopped
+     command: tunnel --no-autoupdate run
+     environment:
+       - TUNNEL_TOKEN=eyJhIjoiMjgwYjgwNzFjNTU4NGQ4NzQyNmE2Y2UyZGQzNDQ3MDMiLCJ0IjoiYzAwMTM3NGItZGY4Yi00M2QxLTlkZjQtZDU1NGE0OTRjYTY2IiwicyI6IllqbGlabVEwTnpRdFpHVm1NQzAwTlRVeUxXSXlNV1V0WkdObE1XTTVPR0poWlRKbCJ9
+     depends_on:
+       - app

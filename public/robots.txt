@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Allow: /login
+Disallow: /dashboard
+Disallow: /api/
+
+Host: https://ezvacss.xyz
+Sitemap: https://ezvacss.xyz/sitemap.xml

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Report malicious shortened links, phishing pages, spam, or malware links to ezvacss.xyz operations. Help keep the web safe.">
+    <title>Report Abuse & Malicious Links | ezvacss.xyz</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="apple-touch-icon" href="/favicon.png">
+    <link rel="stylesheet" href="/styles.css?v=2">
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header class="app-header">
+        <nav class="nav-container">
+            <a href="/" class="logo-link" id="logo-nav-link">
+                <i data-lucide="zap" class="logo-icon"></i>
+                <span class="logo-text">ezvacss.xyz</span>
+            </a>
+            <div class="nav-menu" id="nav-menu-bar">
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="main-content" style="max-width: 500px;">
+        <section class="hero-section">
+            <h1 class="hero-title" style="font-size: 2.5rem;">Report <span>Abuse</span></h1>
+            <p class="hero-subtitle">Flag malicious, phishing, or spam short links for review.</p>
+        </section>
+
+        <section class="premium-card">
+            <form id="report-form" onsubmit="event.preventDefault();">
+                <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+                    
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <label for="code-input" style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary);">Short URL or Code</label>
+                        <div class="input-group">
+                            <input type="text" id="code-input" placeholder="e.g., eVyOGhR or https://ezvacss.xyz/eVyOGhR" required autocomplete="off">
+                        </div>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <label for="reason-input" style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary);">Reason for Report</label>
+                        <div class="input-group" style="padding: 0;">
+                            <textarea id="reason-input" placeholder="Please describe the abuse (phishing, malware, spam, etc.)" required style="width: 100%; min-height: 100px; background: transparent; border: none; outline: none; color: var(--text-primary); font-family: var(--font-sans); font-size: 1.05rem; padding: 1rem; resize: vertical;"></textarea>
+                        </div>
+                    </div>
+
+                    <div id="error-message" style="display: none; color: var(--color-danger); font-size: 0.9rem; font-weight: 600;"></div>
+                    <div id="success-message" style="display: none; color: var(--color-success); font-size: 0.9rem; font-weight: 600;"></div>
+
+                    <button type="submit" class="nav-btn" id="report-submit-btn" style="justify-content: center; width: 100%; padding: 0.8rem;">
+                        <span>Submit Report</span>
+                    </button>
+
+                </div>
+            </form>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <div style="display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
+            <a href="/unshorten" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 600;">Unshorten Link</a>
+            <a href="/report" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 600;">Report Abuse</a>
+            <a href="/contact" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 600;">Contact</a>
+            <a href="/privacy" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 600;">Privacy</a>
+            <a href="/tos" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 600;">Terms</a>
+        </div>
+        <p>&copy; 2026 ezvacss.xyz. Minimalist link utility.</p>
+    </footer>
+
+    <script>
+        const reportForm = document.getElementById('report-form');
+        const codeInput = document.getElementById('code-input');
+        const reasonInput = document.getElementById('reason-input');
+        const errorMessage = document.getElementById('error-message');
+        const successMessage = document.getElementById('success-message');
+        const submitBtn = document.getElementById('report-submit-btn');
+
+        reportForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            errorMessage.style.display = 'none';
+            successMessage.style.display = 'none';
+
+            const code = codeInput.value.trim();
+            const reason = reasonInput.value.trim();
+
+            if (!code || !reason) return;
+
+            const btnText = submitBtn.querySelector('span');
+            btnText.textContent = 'Submitting...';
+            submitBtn.disabled = true;
+
+            try {
+                const response = await fetch('/api/report', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code, reason })
+                });
+
+                if (!response.ok) {
+                    const text = await response.text();
+                    throw new Error(text || 'Failed to submit report');
+                }
+
+                successMessage.textContent = 'Thank you. The report has been filed and sent to admins for review.';
+                successMessage.style.display = 'block';
+                codeInput.value = '';
+                reasonInput.value = '';
+            } catch (err) {
+                errorMessage.textContent = err.message;
+                errorMessage.style.display = 'block';
+            } finally {
+                btnText.textContent = 'Submit Report';
+                submitBtn.disabled = false;
+            }
+        });
+
+        lucide.createIcons();
+    </script>
+</body>
+</html>

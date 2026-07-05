@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ezvacss.xyz Dashboard - Monitor link clicks, conversion metrics, and system logs in real time.">
+    <title>Analytics Dashboard & Link Manager | ezvacss.xyz</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="apple-touch-icon" href="/favicon.png">
+    <link class="styles" rel="stylesheet" href="/styles.css?v=2">
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Chart.js CDN for charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header class="app-header">
+        <nav class="nav-container">
+            <a href="/" class="logo-link" id="logo-nav-link">
+                <i data-lucide="zap" class="logo-icon"></i>
+                <span class="logo-text">ezvacss.xyz</span>
+            </a>
+            <div class="nav-menu" id="nav-menu-bar" style="opacity: 0; transition: opacity 0.1s ease;">
+                <span id="user-display" style="display: none; color: var(--text-secondary); font-size: 0.9rem; font-weight: 600;"></span>
+                <a href="/dashboard" class="nav-item active" id="dashboard-link">Dashboard</a>
+                <button class="nav-item" id="logout-btn" style="display: none; background: transparent; border: none; cursor: pointer;">Logout</button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="main-content" style="max-width: 1200px;">
+        
+        <!-- Hero/Header Section -->
+        <section class="hero-section" style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem;">
+            <div>
+                <h1 class="hero-title" style="font-size: 2.25rem; margin-bottom: 0.25rem;" id="dashboard-hero-title">Dashboard</h1>
+                <p class="hero-subtitle" style="margin: 0;" id="dashboard-hero-subtitle">
+                    Real-time link analytics and activity logs.
+                </p>
+            </div>
+            <div>
+                <button class="nav-btn" id="refresh-stats-btn">
+                    <i data-lucide="refresh-cw" id="refresh-icon"></i>
+                    Refresh
+                </button>
+            </div>
+        </section>
+
+        <!-- Stats Overview Cards -->
+        <section class="dashboard-grid" id="stats-overview-grid">
+            <!-- Stat 1: Total Links -->
+            <div class="stat-card" id="stat-card-total-links">
+                <div class="stat-header">
+                    <span>Total Links</span>
+                    <i data-lucide="link" class="stat-icon"></i>
+                </div>
+                <div class="stat-value" id="stat-value-links">0</div>
+                <div class="stat-change" id="stat-change-links">All Time</div>
+            </div>
+
+            <!-- Stat 2: Total Clicks -->
+            <div class="stat-card" id="stat-card-total-clicks">
+                <div class="stat-header">
+                    <span>Total Clicks</span>
+                    <i data-lucide="mouse-pointer-click" class="stat-icon"></i>
+                </div>
+                <div class="stat-value" id="stat-value-clicks">0</div>
+                <div class="stat-change" id="stat-change-clicks">Real-time</div>
+            </div>
+
+            <!-- Stat 3: Avg Clicks/Link -->
+            <div class="stat-card" id="stat-card-conversion">
+                <div class="stat-header">
+                    <span>Avg Clicks/Link</span>
+                    <i data-lucide="percent" class="stat-icon"></i>
+                </div>
+                <div class="stat-value" id="stat-value-avg">0.0</div>
+                <div class="stat-change" id="stat-change-avg">Average clicks</div>
+            </div>
+
+            <!-- Stat 4: Total Logs -->
+            <div class="stat-card" id="stat-card-logs-count">
+                <div class="stat-header">
+                    <span>Database Logs</span>
+                    <i data-lucide="database" class="stat-icon"></i>
+                </div>
+                <div class="stat-value" id="stat-value-logs">0</div>
+                <div class="stat-change" id="stat-change-logs">Activity count</div>
+            </div>
+        </section>
+
+        <!-- Charts and Breakdown -->
+        <section class="dashboard-sections">
+            <!-- Left: Clicks per Link Chart -->
+            <div class="chart-card" id="analytics-chart-container">
+                <div class="card-header-actions">
+                    <h3 class="feature-title" style="margin: 0; font-size: 1.1rem; text-transform: uppercase;">Top Performing Links</h3>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="clicksChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Right: Browser / Platform Breakdown -->
+            <div class="chart-card" id="device-breakdown-container">
+                <div class="card-header-actions">
+                    <h3 class="feature-title" style="margin: 0; font-size: 1.1rem; text-transform: uppercase;">Device Breakdown</h3>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="deviceChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Link Performance and Action Logs -->
+        <section class="table-card" id="link-performance-section">
+            <div class="card-header-actions" style="flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <h3 class="feature-title" style="margin: 0; font-size: 1.1rem; text-transform: uppercase;">Recent Database Logs</h3>
+                </div>
+                <div>
+                    <input type="text" id="log-search-input" placeholder="Search logs..." class="btn-secondary" style="padding: 0.5rem; background: var(--bg-primary); color: var(--text-primary); border: 1px solid var(--card-border);">
+                </div>
+            </div>
+            
+            <div class="table-wrapper">
+                <table class="analytics-table" id="logs-table">
+                    <thead>
+                        <tr>
+                            <th>Link ID</th>
+                            <th>Timestamp</th>
+                            <th>Code</th>
+                            <th>Action</th>
+                            <th>Location</th>
+                            <th>User Agent</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logs-table-body">
+                        <tr>
+                            <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 3rem;">
+                                <i data-lucide="loader-2" class="spin-icon" style="margin-bottom: 0.5rem; display: block; margin-left: auto; margin-right: auto; width: 2rem; height: 2rem;"></i>
+                                Loading log entries...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Pagination Controls -->
+            <div class="table-pagination" style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--card-border); flex-wrap: wrap; gap: 1rem;">
+                <button class="nav-btn" id="prev-page-btn" style="padding: 0.5rem 1rem; font-size: 0.85rem; display: flex; align-items: center;" disabled>
+                    <i data-lucide="chevron-left" style="width: 1rem; height: 1rem; margin-right: 0.25rem;"></i>
+                    Previous
+                </button>
+                <span id="page-info" style="color: var(--text-secondary); font-size: 0.9rem; font-weight: 600;">Page 1 of 1</span>
+                <button class="nav-btn" id="next-page-btn" style="padding: 0.5rem 1rem; font-size: 0.85rem; display: flex; align-items: center;" disabled>
+                    Next
+                    <i data-lucide="chevron-right" style="width: 1rem; height: 1rem; margin-left: 0.25rem;"></i>
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <div style="display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
+            <a href="/unshorten" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 600;">Unshorten Link</a>
+            <a href="/report" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 600;">Report Abuse</a>
+            <a href="/contact" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 600;">Contact</a>
+            <a href="/privacy" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 600;">Privacy</a>
+            <a href="/tos" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 600;">Terms</a>
+        </div>
+        <p>&copy; 2026 ezvacss.xyz. Minimalist link utility.</p>
+    </footer>
+
+    <!-- CSS Spin animation for loader -->
+    <style>
+        .spin-icon {
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+
+    <!-- Frontend analytics logic script -->
+    <script src="/dashboard.js?v=2"></script>
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>

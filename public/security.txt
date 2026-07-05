@@ -1,0 +1,5 @@
+Contact: mailto:support@ezvacss.xyz
+Contact: https://ezvacss.xyz/contact
+Expires: 2027-07-01T12:00:00.000Z
+Preferred-Languages: en
+Policy: https://ezvacss.xyz/tos

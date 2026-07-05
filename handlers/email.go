@@ -34,6 +34,10 @@ func SendDetailedReportEmail(shortCode, reason, reporterName, reporterEmail, rep
 	}
 
 	subject := fmt.Sprintf("Subject: [Abuse Report] Link /%s Reported (%s)\n", shortCode, reportType)
+	replyTo := ""
+	if reporterEmail != "" && reporterEmail != "Not provided" {
+		replyTo = fmt.Sprintf("Reply-To: %s\n", reporterEmail)
+	}
 	mime := "MIME-version: 1.0;\nContent-Type: text/html; charset=\"UTF-8\";\n\n"
 	body := fmt.Sprintf(`
 		<h2>Abuse Report Submitted</h2>
@@ -49,7 +53,7 @@ func SendDetailedReportEmail(shortCode, reason, reporterName, reporterEmail, rep
 		<p style="font-size: 0.85rem; color: #888;">This is an automated message from ezvacss.xyz operations.</p>
 	`, shortCode, shortCode, reportType, reporterName, reporterEmail, reason)
 
-	msg := []byte(subject + mime + body)
+	msg := []byte(subject + replyTo + mime + body)
 	auth := smtp.PlainAuth("", smtpUser, smtpPass, smtpHost)
 
 	go func() {

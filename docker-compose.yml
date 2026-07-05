@@ -28,12 +28,19 @@ services:
     depends_on:
       - postgres
 
-#   Optional: Expose your local server to ezvacss.xyz via Cloudflare Tunnel securely
-  tunnel:
-     image: cloudflare/cloudflared:latest
-     restart: unless-stopped
-     command: tunnel --no-autoupdate run
-     environment:
-       - TUNNEL_TOKEN=eyJhIjoiMjgwYjgwNzFjNTU4NGQ4NzQyNmE2Y2UyZGQzNDQ3MDMiLCJ0IjoiYzAwMTM3NGItZGY4Yi00M2QxLTlkZjQtZDU1NGE0OTRjYTY2IiwicyI6IllqbGlabVEwTnpRdFpHVm1NQzAwTlRVeUxXSXlNV1V0WkdObE1XTTVPR0poWlRKbCJ9
-     depends_on:
-       - app
+  caddy:
+    image: caddy:2.7-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "./Caddyfile:/etc/caddy/Caddyfile"
+      - "caddy_data:/data"
+      - "caddy_config:/config"
+    depends_on:
+      - app
+
+volumes:
+  caddy_data:
+  caddy_config:

@@ -1,0 +1,17 @@
+# Ignore git repository and IDE settings
+.git
+.idea
+.vscode
+
+# Ignore database data folder (Crucial!)
+postgres/data
+postgres/data/
+
+# Ignore local builds and binaries
+*.exe
+test_build
+test_build.exe
+
+# Ignore env files
+.env
+.env.*

@@ -9,6 +9,7 @@
     <link rel="apple-touch-icon" href="/favicon.png">
     <link rel="stylesheet" href="/styles.css?v=2">
     
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
@@ -20,7 +21,12 @@
                 <i data-lucide="zap" class="logo-icon"></i>
                 <span class="logo-text">ezvacss.xyz</span>
             </a>
-            <div class="nav-menu" id="nav-menu-bar">
+            <div class="nav-menu" id="nav-menu-bar" style="opacity: 0; transition: opacity 0.1s ease;">
+                <span id="user-display" style="display: none; color: var(--text-secondary); font-size: 0.9rem; font-weight: 600;"></span>
+                <a href="/dashboard" class="nav-item" id="dashboard-link" style="display: none;">Dashboard</a>
+                <button class="nav-item" id="logout-btn" style="display: none; background: transparent; border: none; cursor: pointer;">Logout</button>
+                <a href="/login" class="nav-item" id="auth-btn" style="display: none;">Sign In</a>
+                <a href="/login?mode=register" class="nav-btn" id="register-nav-btn" style="display: none;">Register</a>
             </div>
         </nav>
     </header>
@@ -41,6 +47,11 @@
                         <div class="input-group">
                             <input type="text" id="code-input" placeholder="e.g., eVyOGhR or https://ezvacss.xyz/eVyOGhR" required autocomplete="off">
                         </div>
+                    </div>
+
+                    <!-- Cloudflare Turnstile Captcha widget -->
+                    <div id="captcha-container" style="display: none; justify-content: center; margin-top: 0.5rem;">
+                        <div class="cf-turnstile" data-sitekey="0x4AAAAAADv9thFyPxyOl6-p" data-theme="dark"></div>
                     </div>
 
                     <div id="error-message" style="display: none; color: var(--color-danger); font-size: 0.9rem; font-weight: 600;"></div>
@@ -114,12 +125,24 @@
             const code = codeInput.value.trim();
             if (!code) return;
 
+            // Get Turnstile Captcha token
+            const captchaContainer = document.getElementById('captcha-container');
+            const isCaptchaVisible = captchaContainer && captchaContainer.style.display !== 'none';
+            const turnstileResponse = document.querySelector('[name="cf-turnstile-response"]');
+            const turnstileToken = turnstileResponse ? turnstileResponse.value : '';
+
+            if (isCaptchaVisible && !turnstileToken) {
+                errorMessage.textContent = 'Please complete the captcha verification.';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
             const btnText = submitBtn.querySelector('span');
             btnText.textContent = 'Analyzing...';
             submitBtn.disabled = true;
 
             try {
-                const response = await fetch(`/api/unshorten?code=${encodeURIComponent(code)}`);
+                const response = await fetch(`/api/unshorten?code=${encodeURIComponent(code)}&turnstile_token=${encodeURIComponent(turnstileToken)}`);
 
                 if (!response.ok) {
                     const text = await response.text();
@@ -136,12 +159,73 @@
             } catch (err) {
                 errorMessage.textContent = err.message;
                 errorMessage.style.display = 'block';
+                
+                if (typeof turnstile !== 'undefined') {
+                    turnstile.reset();
+                }
             } finally {
                 btnText.textContent = 'Preview Destination';
                 submitBtn.disabled = false;
+                
+                if (previewContainer.style.display === 'block' && typeof turnstile !== 'undefined') {
+                    turnstile.reset();
+                }
             }
         });
 
+        // Navigation check and Captcha toggle logic
+        async function checkAuth() {
+            const userDisplay = document.getElementById('user-display');
+            const dashboardLink = document.getElementById('dashboard-link');
+            const logoutBtn = document.getElementById('logout-btn');
+            const authBtn = document.getElementById('auth-btn');
+            const registerBtn = document.getElementById('register-nav-btn');
+            const captchaContainer = document.getElementById('captcha-container');
+
+            try {
+                const res = await fetch('/api/user');
+                if (res.ok) {
+                    const user = await res.json();
+                    userDisplay.textContent = `@${user.username}`;
+                    userDisplay.style.display = 'inline-block';
+                    dashboardLink.style.display = 'inline-block';
+                    logoutBtn.style.display = 'inline-block';
+                    authBtn.style.display = 'none';
+                    if (registerBtn) registerBtn.style.display = 'none';
+                    if (captchaContainer) captchaContainer.style.display = 'none';
+                } else {
+                    userDisplay.style.display = 'none';
+                    dashboardLink.style.display = 'none';
+                    logoutBtn.style.display = 'none';
+                    authBtn.style.display = 'inline-flex';
+                    if (registerBtn) registerBtn.style.display = 'inline-flex';
+                    if (captchaContainer) captchaContainer.style.display = 'flex';
+                }
+            } catch (err) {
+                console.error('Auth check failed:', err);
+            } finally {
+                const navMenuBar = document.getElementById('nav-menu-bar');
+                if (navMenuBar) {
+                    navMenuBar.style.opacity = '1';
+                }
+            }
+        }
+
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', async () => {
+                try {
+                    const res = await fetch('/api/logout', { method: 'POST' });
+                    if (res.ok) {
+                        window.location.reload();
+                    }
+                } catch (err) {
+                    console.error('Logout failed:', err);
+                }
+            });
+        }
+
+        checkAuth();
         lucide.createIcons();
     </script>
 </body>

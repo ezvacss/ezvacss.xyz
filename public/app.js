@@ -65,6 +65,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const btnText = shortenBtn.querySelector('span');
         const btnIcon = shortenBtn.querySelector('i');
         const originalBtnText = btnText.textContent;
+
+        const captchaContainer = document.getElementById('captcha-container');
+        const isCaptchaVisible = captchaContainer && captchaContainer.style.display !== 'none';
+        const turnstileResponse = document.querySelector('[name="cf-turnstile-response"]');
+        const turnstileToken = turnstileResponse ? turnstileResponse.value : '';
+
+        if (isCaptchaVisible && !turnstileToken) {
+            showError('Please complete the captcha verification.');
+            return;
+        }
+
         btnText.textContent = 'Shortening...';
         shortenBtn.disabled = true;
 
@@ -74,7 +85,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ url: originalUrl }),
+                body: JSON.stringify({ 
+                    url: originalUrl,
+                    turnstile_token: turnstileToken
+                }),
             });
 
             if (!response.ok) {
@@ -104,10 +118,15 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             console.error('Error:', error);
             showError(error.message || 'Something went wrong. Please check your internet connection or try again.');
+            if (typeof turnstile !== 'undefined') {
+                turnstile.reset();
+            }
         } finally {
-            
             btnText.textContent = originalBtnText;
             shortenBtn.disabled = false;
+            if (resultsBox && resultsBox.style.display === 'block' && typeof turnstile !== 'undefined') {
+                turnstile.reset();
+            }
         }
     });
 
@@ -145,6 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             const res = await fetch('/api/user');
+            const captchaContainer = document.getElementById('captcha-container');
             if (res.ok) {
                 const user = await res.json();
                 userDisplay.textContent = `@${user.username}`;
@@ -153,12 +173,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 logoutBtn.style.display = 'inline-block';
                 authBtn.style.display = 'none';
                 if (registerBtn) registerBtn.style.display = 'none';
+                if (captchaContainer) captchaContainer.style.display = 'none';
             } else {
                 userDisplay.style.display = 'none';
                 dashboardLink.style.display = 'none';
                 logoutBtn.style.display = 'none';
                 authBtn.style.display = 'inline-flex';
                 if (registerBtn) registerBtn.style.display = 'inline-flex';
+                if (captchaContainer) captchaContainer.style.display = 'flex';
             }
         } catch (err) {
             console.error('Auth check failed:', err);

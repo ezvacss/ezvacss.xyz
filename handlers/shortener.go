@@ -15,7 +15,8 @@ import (
 )
 
 type ShortenRequest struct {
-	URL string `json:"url"`
+	URL            string `json:"url"`
+	TurnstileToken string `json:"turnstile_token"`
 }
 
 type ShortenResponse struct {
@@ -60,12 +61,31 @@ func HandleShorten(w http.ResponseWriter, r *http.Request) {
 
 	req.URL = rawURL
 
+	userID := GetUserIDFromRequest(r)
+
+	// Verify Turnstile Captcha for guest users (skip for registered/authenticated users)
+	if userID == 0 {
+		ip := r.Header.Get("CF-Connecting-IP")
+		if ip == "" {
+			ip = r.Header.Get("X-Forwarded-For")
+		}
+		if ip == "" {
+			ip = r.RemoteAddr
+		}
+		ip = cleanIP(ip)
+
+		valid, err := VerifyTurnstileToken(req.TurnstileToken, ip)
+		if err != nil || !valid {
+			log.Printf("Captcha verification failed for shorten: valid=%t, err=%v", valid, err)
+			http.Error(w, "Captcha verification failed. Please try again.", http.StatusBadRequest)
+			return
+		}
+	}
+
 	ctx := context.Background()
 
 	// Use random code generation for simplicity. Alternatively, insert then get ID and base62 encode it.
 	shortCode := shortener.GenerateRandomCode(7)
-
-	userID := GetUserIDFromRequest(r)
 
 	// Insert into urls table
 	var dbErr error
@@ -392,6 +412,27 @@ func HandleUnshorten(w http.ResponseWriter, r *http.Request) {
 	if code == "" {
 		http.Error(w, "Code parameter is required", http.StatusBadRequest)
 		return
+	}
+
+	// Verify Turnstile Captcha for guest users (skip for registered/authenticated users)
+	userID := GetUserIDFromRequest(r)
+	if userID == 0 {
+		token := r.URL.Query().Get("turnstile_token")
+		ip := r.Header.Get("CF-Connecting-IP")
+		if ip == "" {
+			ip = r.Header.Get("X-Forwarded-For")
+		}
+		if ip == "" {
+			ip = r.RemoteAddr
+		}
+		ip = cleanIP(ip)
+
+		valid, err := VerifyTurnstileToken(token, ip)
+		if err != nil || !valid {
+			log.Printf("Captcha verification failed for unshorten: valid=%t, err=%v", valid, err)
+			http.Error(w, "Captcha verification failed. Please try again.", http.StatusBadRequest)
+			return
+		}
 	}
 
 	// Clean code if it's a full URL

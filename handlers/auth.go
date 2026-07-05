@@ -21,13 +21,15 @@ var (
 )
 
 type RegisterRequest struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
+	Username       string `json:"username"`
+	Password       string `json:"password"`
+	TurnstileToken string `json:"turnstile_token"`
 }
 
 type LoginRequest struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
+	Username       string `json:"username"`
+	Password       string `json:"password"`
+	TurnstileToken string `json:"turnstile_token"`
 }
 
 type UserResponse struct {
@@ -51,6 +53,23 @@ func HandleRegister(w http.ResponseWriter, r *http.Request) {
 	var req RegisterRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	// Verify Turnstile Captcha
+	ip := r.Header.Get("CF-Connecting-IP")
+	if ip == "" {
+		ip = r.Header.Get("X-Forwarded-For")
+	}
+	if ip == "" {
+		ip = r.RemoteAddr
+	}
+	ip = cleanIP(ip)
+
+	valid, err := VerifyTurnstileToken(req.TurnstileToken, ip)
+	if err != nil || !valid {
+		log.Printf("Captcha verification failed for register: valid=%t, err=%v", valid, err)
+		http.Error(w, "Captcha verification failed. Please try again.", http.StatusBadRequest)
 		return
 	}
 
@@ -113,6 +132,23 @@ func HandleLogin(w http.ResponseWriter, r *http.Request) {
 	var req LoginRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	// Verify Turnstile Captcha
+	ip := r.Header.Get("CF-Connecting-IP")
+	if ip == "" {
+		ip = r.Header.Get("X-Forwarded-For")
+	}
+	if ip == "" {
+		ip = r.RemoteAddr
+	}
+	ip = cleanIP(ip)
+
+	valid, err := VerifyTurnstileToken(req.TurnstileToken, ip)
+	if err != nil || !valid {
+		log.Printf("Captcha verification failed for login: valid=%t, err=%v", valid, err)
+		http.Error(w, "Captcha verification failed. Please try again.", http.StatusBadRequest)
 		return
 	}
 

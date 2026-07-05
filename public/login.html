@@ -8,12 +8,11 @@
     <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="apple-touch-icon" href="/favicon.png">
     <link rel="stylesheet" href="/styles.css?v=2">
-    
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
 
-    
     <header class="app-header">
         <nav class="nav-container">
             <a href="/" class="logo-link" id="logo-nav-link">
@@ -25,23 +24,34 @@
         </nav>
     </header>
 
-    
-    <main class="main-content" style="max-width: 450px;">
+    <main class="main-content" style="max-width: 450px; padding: 2rem 1.5rem;">
         
-        <div class="premium-card">
+        <div class="premium-card" style="box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3); border-color: rgba(228, 228, 231, 0.15);">
             
-            <div style="display: flex; border-bottom: 2px solid var(--card-border); margin-bottom: 1.5rem;">
-                <button id="tab-login" style="flex: 1; padding: 0.75rem; background: transparent; border: none; color: var(--text-primary); font-weight: 800; font-size: 1rem; border-bottom: 2px solid var(--text-primary); cursor: pointer; text-transform: uppercase; letter-spacing: -0.02em;">Sign In</button>
-                <button id="tab-register" style="flex: 1; padding: 0.75rem; background: transparent; border: none; color: var(--text-secondary); font-weight: 600; font-size: 1rem; cursor: pointer; text-transform: uppercase; letter-spacing: -0.02em;">Register</button>
+            <div style="display: flex; justify-content: center; margin-top: -1rem; margin-bottom: 1.5rem;">
+                <div style="width: 60px; height: 60px; background: linear-gradient(135deg, var(--text-primary), var(--text-secondary)); display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px rgba(228, 228, 231, 0.2); border: 2px solid rgba(255,255,255,0.05);">
+                    <i data-lucide="zap" style="width: 28px; height: 28px; color: var(--bg-primary);"></i>
+                </div>
             </div>
 
-            
+            <div style="display: flex; border-bottom: 2px solid var(--card-border); margin-bottom: 1rem;">
+                <button id="tab-login" style="flex: 1; padding: 0.75rem; background: transparent; border: none; color: var(--text-primary); font-weight: 800; font-size: 1rem; border-bottom: 2px solid var(--text-primary); cursor: pointer; text-transform: uppercase; letter-spacing: -0.02em; transition: all 0.2s ease;">Sign In</button>
+                <button id="tab-register" style="flex: 1; padding: 0.75rem; background: transparent; border: none; color: var(--text-secondary); font-weight: 600; font-size: 1rem; cursor: pointer; text-transform: uppercase; letter-spacing: -0.02em; transition: all 0.2s ease;">Register</button>
+            </div>
+
+            <p id="auth-desc" style="color: var(--text-secondary); text-align: center; margin-bottom: 1.5rem; font-size: 0.9rem; line-height: 1.4;">
+                Sign in to manage your shortened links and view live analytics.
+            </p>
+
             <form id="auth-form" onsubmit="event.preventDefault();">
                 <div style="display: flex; flex-direction: column; gap: 1.25rem;">
                     
                     <div style="display: flex; flex-direction: column; gap: 0.5rem;">
                         <label for="username-input" style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary);">Username</label>
                         <div class="input-group">
+                            <div class="input-icon-wrapper">
+                                <i data-lucide="user" style="width: 1.1rem; height: 1.1rem; color: var(--text-secondary);"></i>
+                            </div>
                             <input type="text" id="username-input" placeholder="Enter username" required autocomplete="username">
                         </div>
                     </div>
@@ -49,17 +59,19 @@
                     <div style="display: flex; flex-direction: column; gap: 0.5rem;">
                         <label for="password-input" style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary);">Password</label>
                         <div class="input-group">
+                            <div class="input-icon-wrapper">
+                                <i data-lucide="lock" style="width: 1.1rem; height: 1.1rem; color: var(--text-secondary);"></i>
+                            </div>
                             <input type="password" id="password-input" placeholder="Enter password" required autocomplete="current-password">
                         </div>
                     </div>
 
-                    <div id="error-message" style="display: none; color: var(--color-danger); font-size: 0.9rem; font-weight: 600;">
-                        Invalid username or password.
+                    <div style="display: flex; justify-content: center; margin: 0.5rem 0;">
+                        <div class="cf-turnstile" data-sitekey="0x4AAAAAADv9thFyPxyOl6-p" data-theme="dark"></div>
                     </div>
 
-                    <div id="success-message" style="display: none; color: var(--color-success); font-size: 0.9rem; font-weight: 600;">
-                        Account created! You can now log in.
-                    </div>
+                    <div id="error-message" style="display: none; color: var(--color-danger); font-size: 0.9rem; font-weight: 600; line-height: 1.4;"></div>
+                    <div id="success-message" style="display: none; color: var(--color-success); font-size: 0.9rem; font-weight: 600; line-height: 1.4;"></div>
 
                     <button type="submit" class="nav-btn" id="auth-submit-btn" style="justify-content: center; width: 100%; padding: 0.8rem;">
                         <span>Sign In</span>
@@ -71,7 +83,6 @@
 
     </main>
 
-    
     <footer class="app-footer">
         <div style="display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
             <a href="/unshorten" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 600;">Unshorten Link</a>
@@ -84,8 +95,7 @@
     </footer>
 
     <script>
-        // Tab switching and auth logic
-        let mode = 'login'; // 'login' or 'register'
+        let mode = 'login'; 
 
         const tabLogin = document.getElementById('tab-login');
         const tabRegister = document.getElementById('tab-register');
@@ -95,6 +105,7 @@
         const errorMessage = document.getElementById('error-message');
         const successMessage = document.getElementById('success-message');
         const authForm = document.getElementById('auth-form');
+        const authDesc = document.getElementById('auth-desc');
 
         tabLogin.addEventListener('click', () => {
             mode = 'login';
@@ -106,6 +117,7 @@
             tabRegister.style.color = 'var(--text-secondary)';
             tabRegister.style.fontWeight = '600';
 
+            authDesc.textContent = 'Sign in to manage your shortened links and view live analytics.';
             authSubmitBtn.querySelector('span').textContent = 'Sign In';
             errorMessage.style.display = 'none';
             successMessage.style.display = 'none';
@@ -121,6 +133,7 @@
             tabLogin.style.color = 'var(--text-secondary)';
             tabLogin.style.fontWeight = '600';
 
+            authDesc.textContent = 'Create a secure account to organize, custom-tag, and track your shortened URLs.';
             authSubmitBtn.querySelector('span').textContent = 'Register Account';
             errorMessage.style.display = 'none';
             successMessage.style.display = 'none';
@@ -134,7 +147,21 @@
             const username = usernameInput.value.trim();
             const password = passwordInput.value;
 
+            // Get Turnstile token
+            const turnstileResponse = document.querySelector('[name="cf-turnstile-response"]');
+            const turnstile_token = turnstileResponse ? turnstileResponse.value : '';
+
             if (!username || !password) return;
+            if (!turnstile_token) {
+                errorMessage.textContent = 'Please complete the captcha verification.';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            const btnText = authSubmitBtn.querySelector('span');
+            const originalBtnText = btnText.textContent;
+            btnText.textContent = mode === 'login' ? 'Authenticating...' : 'Registering...';
+            authSubmitBtn.disabled = true;
 
             const endpoint = mode === 'login' ? '/api/login' : '/api/register';
 
@@ -142,7 +169,7 @@
                 const response = await fetch(endpoint, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, password })
+                    body: JSON.stringify({ username, password, turnstile_token })
                 });
 
                 if (!response.ok) {
@@ -151,14 +178,15 @@
                 }
 
                 if (mode === 'login') {
-                    // Success, redirect to dashboard
                     window.location.href = '/dashboard';
                 } else {
-                    // Registration success
                     successMessage.textContent = 'Account created successfully! Switching to sign in...';
                     successMessage.style.display = 'block';
                     usernameInput.value = '';
                     passwordInput.value = '';
+                    if (typeof turnstile !== 'undefined') {
+                        turnstile.reset();
+                    }
                     setTimeout(() => {
                         tabLogin.click();
                     }, 1500);
@@ -166,10 +194,15 @@
             } catch (err) {
                 errorMessage.textContent = err.message;
                 errorMessage.style.display = 'block';
+                if (typeof turnstile !== 'undefined') {
+                    turnstile.reset();
+                }
+            } finally {
+                btnText.textContent = originalBtnText;
+                authSubmitBtn.disabled = false;
             }
         });
 
-        // Parse query parameter to switch mode
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('mode') === 'register') {
             tabRegister.click();

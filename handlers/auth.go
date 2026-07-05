@@ -156,7 +156,7 @@ func HandleLogin(w http.ResponseWriter, r *http.Request) {
 
 	var userID int
 	var passwordHash string
-	err := db.Pool.QueryRow(ctx, 
+	err = db.Pool.QueryRow(ctx, 
 		"SELECT id, password_hash FROM users WHERE username = $1", 
 		req.Username).Scan(&userID, &passwordHash)
 	

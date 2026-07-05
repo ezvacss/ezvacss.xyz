@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         
         let testStr = originalUrl;
-        if (!/^https?:\/\
+        if (!/^https?:\/\//i.test(testStr)) {
             testStr = 'http://' + testStr;
         }
         let parsedUrl;

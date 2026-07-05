@@ -1,3 +1,4 @@
 ezvacss.xyz {
+    encode gzip zstd
     reverse_proxy app:8080
 }

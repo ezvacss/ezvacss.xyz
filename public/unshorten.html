@@ -14,7 +14,6 @@
     <meta property="og:image" content="https://ezvacss.xyz/favicon.png">
     <meta property="og:url" content="https://ezvacss.xyz/unshorten">
     <meta property="og:type" content="website">
-    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
@@ -192,6 +191,17 @@
             }
         });
 
+        function loadTurnstileScript() {
+            if (!document.getElementById('cf-turnstile-script')) {
+                const script = document.createElement('script');
+                script.id = 'cf-turnstile-script';
+                script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+                script.async = true;
+                script.defer = true;
+                document.head.appendChild(script);
+            }
+        }
+
         // Navigation check and Captcha toggle logic
         async function checkAuth() {
             const userDisplay = document.getElementById('user-display');
@@ -219,7 +229,10 @@
                         logoutBtn.style.display = 'none';
                         authBtn.style.display = 'inline-flex';
                         if (registerBtn) registerBtn.style.display = 'inline-flex';
-                        if (captchaContainer) captchaContainer.style.display = 'flex';
+                        if (captchaContainer) {
+                            captchaContainer.style.display = 'flex';
+                            loadTurnstileScript();
+                        }
                     }
                 } else {
                     userDisplay.style.display = 'none';
@@ -227,7 +240,10 @@
                     logoutBtn.style.display = 'none';
                     authBtn.style.display = 'inline-flex';
                     if (registerBtn) registerBtn.style.display = 'inline-flex';
-                    if (captchaContainer) captchaContainer.style.display = 'flex';
+                    if (captchaContainer) {
+                        captchaContainer.style.display = 'flex';
+                        loadTurnstileScript();
+                    }
                 }
             } catch (err) {
                 console.error('Auth check failed:', err);

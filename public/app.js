@@ -162,6 +162,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const authBtn = document.getElementById('auth-btn');
         const registerBtn = document.getElementById('register-nav-btn');
 
+        function loadTurnstileScript() {
+            if (!document.getElementById('cf-turnstile-script')) {
+                const script = document.createElement('script');
+                script.id = 'cf-turnstile-script';
+                script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+                script.async = true;
+                script.defer = true;
+                document.head.appendChild(script);
+            }
+        }
+
         try {
             const res = await fetch('/api/user');
             const captchaContainer = document.getElementById('captcha-container');
@@ -181,7 +192,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     logoutBtn.style.display = 'none';
                     authBtn.style.display = 'inline-flex';
                     if (registerBtn) registerBtn.style.display = 'inline-flex';
-                    if (captchaContainer) captchaContainer.style.display = 'flex';
+                    if (captchaContainer) {
+                        captchaContainer.style.display = 'flex';
+                        loadTurnstileScript();
+                    }
                 }
             } else {
                 userDisplay.style.display = 'none';
@@ -189,7 +203,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 logoutBtn.style.display = 'none';
                 authBtn.style.display = 'inline-flex';
                 if (registerBtn) registerBtn.style.display = 'inline-flex';
-                if (captchaContainer) captchaContainer.style.display = 'flex';
+                if (captchaContainer) {
+                    captchaContainer.style.display = 'flex';
+                    loadTurnstileScript();
+                }
             }
         } catch (err) {
             console.error('Auth check failed:', err);

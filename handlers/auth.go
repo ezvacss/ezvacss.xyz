@@ -126,13 +126,13 @@ func HandleRegister(w http.ResponseWriter, r *http.Request) {
 	sessions[sessionID] = userID
 	sessionsMutex.Unlock()
 
-	// Set cookie
 	http.SetCookie(w, &http.Cookie{
 		Name:     "session_id",
 		Value:    sessionID,
 		Path:     "/",
 		Expires:  time.Now().Add(24 * time.Hour),
 		HttpOnly: true,
+		Secure:   true,
 		SameSite: http.SameSiteLaxMode,
 	})
 
@@ -197,13 +197,13 @@ func HandleLogin(w http.ResponseWriter, r *http.Request) {
 	sessions[sessionID] = userID
 	sessionsMutex.Unlock()
 
-	// Set cookie
 	http.SetCookie(w, &http.Cookie{
 		Name:     "session_id",
 		Value:    sessionID,
 		Path:     "/",
 		Expires:  time.Now().Add(24 * time.Hour),
 		HttpOnly: true,
+		Secure:   true,
 		SameSite: http.SameSiteLaxMode,
 	})
 
@@ -219,13 +219,13 @@ func HandleLogout(w http.ResponseWriter, r *http.Request) {
 		sessionsMutex.Unlock()
 	}
 
-	// Clear cookie
 	http.SetCookie(w, &http.Cookie{
 		Name:     "session_id",
 		Value:    "",
 		Path:     "/",
 		MaxAge:   -1,
 		HttpOnly: true,
+		Secure:   true,
 	})
 
 	w.WriteHeader(http.StatusOK)

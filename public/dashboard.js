@@ -202,6 +202,20 @@ document.addEventListener('DOMContentLoaded', () => {
     
 
     
+    function escapeHTML(str) {
+        if (!str) return '';
+        return str.replace(/[&<>"']/g, function(m) {
+            switch (m) {
+                case '&': return '&amp;';
+                case '<': return '&lt;';
+                case '>': return '&gt;';
+                case '"': return '&quot;';
+                case "'": return '&#039;';
+                default: return m;
+            }
+        });
+    }
+
     function renderLogsTable(logsList) {
         const prevBtn = document.getElementById('prev-page-btn');
         const nextBtn = document.getElementById('next-page-btn');
@@ -246,19 +260,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const locationText = log.location ? log.location : 'Resolving...';
 
+            const userAgentSafe = escapeHTML(log.user_agent || '');
+            const userAgentStringSafe = escapeHTML(userAgentString);
+            const locationSafe = escapeHTML(locationText);
+            const shortCodeSafe = escapeHTML(log.short_code);
+
             return `
                 <tr>
                     <td>#${log.id}</td>
                     <td style="white-space: nowrap;">${formattedTime}</td>
-                    <td><a href="/${log.short_code}" target="_blank" class="code-badge" style="color: var(--text-primary); text-decoration: underline; font-weight: 700;">/${log.short_code}</a></td>
+                    <td><a href="/${shortCodeSafe}" target="_blank" class="code-badge" style="color: var(--text-primary); text-decoration: underline; font-weight: 700;">/${shortCodeSafe}</a></td>
                     <td>
                         <span style="display: inline-block; padding: 0.25rem 0.5rem; border-radius: 6px; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; ${actionBadgeStyle}">
                             ${log.action}
                         </span>
                     </td>
-                    <td class="location-cell" style="font-family: monospace; color: var(--text-secondary);" title="${locationText}">${locationText}</td>
-                    <td style="max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${log.user_agent || ''}">
-                        ${userAgentString}
+                    <td class="location-cell" style="font-family: monospace; color: var(--text-secondary);" title="${locationSafe}">${locationSafe}</td>
+                    <td style="max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${userAgentSafe}">
+                        ${userAgentStringSafe}
                     </td>
                 </tr>
             `;

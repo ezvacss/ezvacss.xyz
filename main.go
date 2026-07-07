@@ -57,50 +57,82 @@ func main() {
 			return
 		}
 		
-		// Serve dashboard.html for /dashboard
-		if path == "/dashboard" || path == "/dashboard/" {
+		// Redirect /dashboard -> /dashboard/
+		if path == "/dashboard" {
+			http.Redirect(w, r, "/dashboard/", http.StatusMovedPermanently)
+			return
+		}
+		if path == "/dashboard/" {
 			http.ServeFile(w, r, "./public/dashboard.html")
 			return
 		}
 
-		// Serve login.html for /login
-		if path == "/login" || path == "/login/" {
+		// Redirect /login -> /login/
+		if path == "/login" {
+			http.Redirect(w, r, "/login/", http.StatusMovedPermanently)
+			return
+		}
+		if path == "/login/" {
 			http.ServeFile(w, r, "./public/login.html")
 			return
 		}
 
-		// Serve register.html for /register
-		if path == "/register" || path == "/register/" {
+		// Redirect /register -> /register/
+		if path == "/register" {
+			http.Redirect(w, r, "/register/", http.StatusMovedPermanently)
+			return
+		}
+		if path == "/register/" {
 			http.ServeFile(w, r, "./public/register.html")
 			return
 		}
 
-		// Serve privacy.html for /privacy
-		if path == "/privacy" || path == "/privacy/" {
+		// Redirect /privacy -> /privacy/
+		if path == "/privacy" {
+			http.Redirect(w, r, "/privacy/", http.StatusMovedPermanently)
+			return
+		}
+		if path == "/privacy/" {
 			http.ServeFile(w, r, "./public/privacy.html")
 			return
 		}
 
-		// Serve tos.html for /tos
-		if path == "/tos" || path == "/tos/" {
+		// Redirect /tos -> /tos/
+		if path == "/tos" {
+			http.Redirect(w, r, "/tos/", http.StatusMovedPermanently)
+			return
+		}
+		if path == "/tos/" {
 			http.ServeFile(w, r, "./public/tos.html")
 			return
 		}
 
-		// Serve contact.html for /contact
-		if path == "/contact" || path == "/contact/" {
+		// Redirect /contact -> /contact/
+		if path == "/contact" {
+			http.Redirect(w, r, "/contact/", http.StatusMovedPermanently)
+			return
+		}
+		if path == "/contact/" {
 			http.ServeFile(w, r, "./public/contact.html")
 			return
 		}
 
-		// Serve report.html for /report
-		if path == "/report" || path == "/report/" {
+		// Redirect /report -> /report/
+		if path == "/report" {
+			http.Redirect(w, r, "/report/", http.StatusMovedPermanently)
+			return
+		}
+		if path == "/report/" {
 			http.ServeFile(w, r, "./public/report.html")
 			return
 		}
 
-		// Serve unshorten.html for /unshorten
-		if path == "/unshorten" || path == "/unshorten/" {
+		// Redirect /unshorten -> /unshorten/
+		if path == "/unshorten" {
+			http.Redirect(w, r, "/unshorten/", http.StatusMovedPermanently)
+			return
+		}
+		if path == "/unshorten/" {
 			http.ServeFile(w, r, "./public/unshorten.html")
 			return
 		}

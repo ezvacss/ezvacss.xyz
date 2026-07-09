@@ -7,43 +7,43 @@
         <priority>1.0</priority>
     </url>
     <url>
-        <loc>https://ezvacss.xyz/login</loc>
+        <loc>https://ezvacss.xyz/login/</loc>
         <lastmod>2026-07-04</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
-        <loc>https://ezvacss.xyz/register</loc>
+        <loc>https://ezvacss.xyz/register/</loc>
         <lastmod>2026-07-04</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
-        <loc>https://ezvacss.xyz/privacy</loc>
+        <loc>https://ezvacss.xyz/privacy/</loc>
         <lastmod>2026-07-04</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://ezvacss.xyz/tos</loc>
+        <loc>https://ezvacss.xyz/tos/</loc>
         <lastmod>2026-07-04</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://ezvacss.xyz/contact</loc>
+        <loc>https://ezvacss.xyz/contact/</loc>
         <lastmod>2026-07-04</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://ezvacss.xyz/report</loc>
+        <loc>https://ezvacss.xyz/report/</loc>
         <lastmod>2026-07-04</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
     </url>
     <url>
-        <loc>https://ezvacss.xyz/unshorten</loc>
+        <loc>https://ezvacss.xyz/unshorten/</loc>
         <lastmod>2026-07-04</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.7</priority>

@@ -1,4 +1,8 @@
 ezvacss.xyz {
     encode gzip zstd
+    
+    # Enforce HTTPS with HSTS
+    header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+    
     reverse_proxy app:8080
 }

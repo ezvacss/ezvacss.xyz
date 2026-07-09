@@ -4,5 +4,21 @@ ezvacss.xyz {
     # Enforce HTTPS with HSTS
     header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
     
+    # Proxy Umami tracking script (masking the URL to bypass ad blockers)
+    handle /custom-js {
+        rewrite * /script.js
+        reverse_proxy https://cloud.umami.is {
+            header_up Host cloud.umami.is
+        }
+    }
+    
+    # Proxy Umami event collector (masking the API endpoint)
+    handle /custom-api/* {
+        uri strip_prefix /custom-api
+        reverse_proxy https://cloud.umami.is {
+            header_up Host cloud.umami.is
+        }
+    }
+    
     reverse_proxy app:8080
 }

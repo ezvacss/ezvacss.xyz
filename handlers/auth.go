@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"vibeCodingLinkShortener/db"
+
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -92,7 +93,7 @@ func HandleRegister(w http.ResponseWriter, r *http.Request) {
 	}
 
 	ctx := context.Background()
-	
+
 	// Check if username already exists
 	var exists bool
 	err = db.Pool.QueryRow(ctx, "SELECT EXISTS(SELECT 1 FROM users WHERE username = $1)", req.Username).Scan(&exists)
@@ -109,10 +110,10 @@ func HandleRegister(w http.ResponseWriter, r *http.Request) {
 
 	// Insert user
 	var userID int
-	err = db.Pool.QueryRow(ctx, 
-		"INSERT INTO users (username, password_hash) VALUES ($1, $2) RETURNING id", 
+	err = db.Pool.QueryRow(ctx,
+		"INSERT INTO users (username, password_hash) VALUES ($1, $2) RETURNING id",
 		req.Username, string(hash)).Scan(&userID)
-	
+
 	if err != nil {
 		log.Printf("Failed to insert user: %v", err)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
@@ -173,10 +174,10 @@ func HandleLogin(w http.ResponseWriter, r *http.Request) {
 
 	var userID int
 	var passwordHash string
-	err = db.Pool.QueryRow(ctx, 
-		"SELECT id, password_hash FROM users WHERE username = $1", 
+	err = db.Pool.QueryRow(ctx,
+		"SELECT id, password_hash FROM users WHERE username = $1",
 		req.Username).Scan(&userID, &passwordHash)
-	
+
 	if err != nil {
 		// User not found
 		http.Error(w, "Invalid username or password", http.StatusUnauthorized)

@@ -144,9 +144,25 @@
     }
     renderTurnstile();
 
+    function showError(msg) {
+        if (!errorMessage) return;
+        errorMessage.textContent = msg;
+        errorMessage.style.display = 'block';
+        errorMessage.classList.add('visible');
+    }
+
+    function hideError() {
+        if (!errorMessage) return;
+        errorMessage.style.display = 'none';
+        errorMessage.classList.remove('visible');
+    }
+
+    if (usernameInput) usernameInput.addEventListener('input', hideError);
+    if (passwordInput) passwordInput.addEventListener('input', hideError);
+
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        errorMessage.style.display = 'none';
+        hideError();
 
         const username = usernameInput.value.trim();
         const password = passwordInput.value;
@@ -156,8 +172,7 @@
 
         if (!username || !password) return;
         if (!turnstile_token && !isLocalDev) {
-            errorMessage.textContent = 'Please complete the captcha verification.';
-            errorMessage.style.display = 'block';
+            showError('Please complete the captcha verification.');
             return;
         }
 
@@ -179,8 +194,7 @@
 
             window.location.href = '/dashboard';
         } catch (err) {
-            errorMessage.textContent = err.message;
-            errorMessage.style.display = 'block';
+            showError(err.message || 'Invalid username or password.');
             if (typeof turnstile !== 'undefined') {
                 turnstile.reset();
             }

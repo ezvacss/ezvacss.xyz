@@ -14,6 +14,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const errorMessageText = document.getElementById('error-message-text');
     const isLocalDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 
+    // Device Detection & Mobile Input Placeholders
+    const isMobileDevice = window.innerWidth <= 768 || ('ontouchstart' in window);
+    if (isMobileDevice) {
+        if (urlInput) {
+            urlInput.placeholder = "Tap or paste long URL...";
+        }
+        const codeInput = document.getElementById('code-input');
+        if (codeInput) {
+            codeInput.placeholder = "Tap or paste short URL or code...";
+        }
+        const reportCodeInput = document.getElementById('report-code-input');
+        if (reportCodeInput) {
+            reportCodeInput.placeholder = "Tap or paste short link or code...";
+        }
+    }
+
     // Global keyboard shortcut: Press '/' to focus input
     window.addEventListener('keydown', (e) => {
         const activeElem = document.activeElement;

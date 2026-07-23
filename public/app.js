@@ -91,13 +91,22 @@ document.addEventListener('DOMContentLoaded', () => {
     function showError(msg) {
         if (!errorMessage) return;
 
-        errorMessage.textContent = msg;
+        if (errorMessageText) {
+            errorMessageText.textContent = msg;
+        } else {
+            errorMessage.textContent = msg;
+        }
+        errorMessage.style.display = 'block';
         errorMessage.classList.add('visible');
+        if (resultsBox) {
+            resultsBox.style.display = 'none';
+        }
     }
 
     function hideError() {
         if (!errorMessage) return;
 
+        errorMessage.style.display = 'none';
         errorMessage.classList.remove('visible');
     }
 

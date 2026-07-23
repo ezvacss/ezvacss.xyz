@@ -130,7 +130,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (shortenForm) {
         shortenForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            hideError();
 
             let buttonTextTimer;
 
@@ -175,8 +174,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
             const btnText = shortenBtn.querySelector('span');
-            const btnIcon = shortenBtn.querySelector('i');
-            const originalBtnText = btnText.textContent;
 
             const captchaContainer = document.getElementById('captcha-container');
             const isCaptchaVisible = captchaContainer && captchaContainer.style.display !== 'none';
@@ -188,7 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            setButtonText(btnText, 'Shortening...');
+            if (btnText) btnText.textContent = 'Shortening...';
             shortenBtn.disabled = true;
             shortenBtn.setAttribute('aria-busy', 'true');
 
@@ -211,19 +208,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const data = await response.json();
 
-
                 originalUrlText.textContent = originalUrl;
                 shortenedUrlText.textContent = data.short_url;
                 shortenedUrlText.href = data.short_url;
 
-
-                const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(data.short_url)}`;
+                const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(data.short_url)}`;
                 qrCodeImage.src = qrApiUrl;
 
-
+                hideError();
                 resultsBox.style.display = 'block';
                 resultsBox.scrollIntoView({behavior: 'smooth', block: 'nearest'});
-
 
                 urlInput.value = '';
 
@@ -234,7 +228,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     turnstile.reset();
                 }
             } finally {
-                setButtonText(btnText, originalBtnText);
+                if (btnText) btnText.textContent = 'Shorten';
                 shortenBtn.disabled = false;
                 shortenBtn.setAttribute('aria-busy', 'false');
                 if (resultsBox && resultsBox.style.display === 'block' && typeof turnstile !== 'undefined') {
@@ -269,6 +263,108 @@ document.addEventListener('DOMContentLoaded', () => {
 
             } catch (err) {
                 console.error('Failed to copy text: ', err);
+            }
+        });
+    }
+
+    // QR Code Actions: Download (HD 600x600), Share, Print (HD)
+    const downloadQrBtn = document.getElementById('download-qr-btn');
+    if (downloadQrBtn && qrCodeImage) {
+        downloadQrBtn.addEventListener('click', async () => {
+            const targetUrl = shortenedUrlText ? (shortenedUrlText.href || shortenedUrlText.textContent) : '';
+            if (!targetUrl) return;
+
+            // Fetch HD 600x600 PNG image for high-quality downloads & prints
+            const hdQrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=600x600&data=${encodeURIComponent(targetUrl)}`;
+            try {
+                const response = await fetch(hdQrUrl);
+                const blob = await response.blob();
+                const blobUrl = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = blobUrl;
+                a.download = 'ezvacss-qr-code-hd.png';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(blobUrl);
+            } catch (err) {
+                console.error('Failed to download HD QR code image:', err);
+                window.open(hdQrUrl, '_blank');
+            }
+        });
+    }
+
+    const shareQrBtn = document.getElementById('share-qr-btn');
+    if (shareQrBtn) {
+        shareQrBtn.addEventListener('click', async () => {
+            const shortUrl = shortenedUrlText ? (shortenedUrlText.href || shortenedUrlText.textContent) : window.location.href;
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: 'ezvacss.xyz Short Link',
+                        text: 'Check out this shortened link created with ezvacss.xyz:',
+                        url: shortUrl
+                    });
+                } catch (err) {
+                    if (err.name !== 'AbortError') {
+                        console.error('Share failed:', err);
+                    }
+                }
+            } else {
+                try {
+                    await navigator.clipboard.writeText(shortUrl);
+                    const span = shareQrBtn.querySelector('span');
+                    if (span) {
+                        const origText = span.textContent;
+                        span.textContent = 'Copied!';
+                        setTimeout(() => { span.textContent = origText; }, 2000);
+                    }
+                } catch (e) {
+                    console.error('Copy fallback failed:', e);
+                }
+            }
+        });
+    }
+
+    const printQrBtn = document.getElementById('print-qr-btn');
+    if (printQrBtn) {
+        printQrBtn.addEventListener('click', () => {
+            const shortUrl = shortenedUrlText ? (shortenedUrlText.href || shortenedUrlText.textContent) : '';
+            if (!shortUrl) return;
+
+            const hdQrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=600x600&data=${encodeURIComponent(shortUrl)}`;
+            const printWin = window.open('', '_blank', 'width=600,height=700');
+            if (printWin) {
+                printWin.document.write(`
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <title>Print QR Code | ezvacss.xyz</title>
+                        <style>
+                            body { font-family: system-ui, -apple-system, sans-serif; text-align: center; padding: 3rem; background: #fff; color: #111; }
+                            .card { border: 2px solid #e2e8f0; border-radius: 16px; padding: 2.5rem; display: inline-block; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+                            h2 { font-size: 1.6rem; margin: 0 0 0.5rem 0; color: #0f172a; letter-spacing: -0.02em; }
+                            p { color: #64748b; font-size: 0.95rem; margin-bottom: 1.75rem; }
+                            img { width: 220px; height: 220px; border-radius: 8px; border: 1px solid #cbd5e1; padding: 0.5rem; background: #fff; }
+                            .url { font-family: monospace; font-size: 1.15rem; font-weight: 700; color: #4f46e5; margin-top: 1.5rem; word-break: break-all; }
+                            .footer { margin-top: 1.5rem; font-size: 0.8rem; color: #94a3b8; }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="card">
+                            <h2>ezvacss.xyz</h2>
+                            <p>Scan with any phone camera to access link</p>
+                            <img src="${hdQrUrl}" alt="High-Res QR Code">
+                            <div class="url">${shortUrl}</div>
+                            <div class="footer">Created with ezvacss.xyz link shortener</div>
+                        </div>
+                        <script>
+                            window.onload = () => { window.print(); window.close(); };
+                        <\/script>
+                    </body>
+                    </html>
+                `);
+                printWin.document.close();
             }
         });
     }

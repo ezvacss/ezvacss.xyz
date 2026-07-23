@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"log"
+	"net"
 	"net/http"
 	"net/url"
 	"os"
@@ -57,6 +58,20 @@ func HandleShorten(w http.ResponseWriter, r *http.Request) {
 	if u.Host == r.Host || u.Host == "ezvacss.xyz" {
 		http.Error(w, "Cannot shorten links targeting our own domain.", http.StatusBadRequest)
 		return
+	}
+
+	// Verify target domain DNS existence to block dead / non-existent domains
+	host := u.Hostname()
+	if host != "localhost" && host != "127.0.0.1" {
+		lookupCtx, cancel := context.WithTimeout(r.Context(), 3*time.Second)
+		defer cancel()
+
+		var resolver net.Resolver
+		addrs, err := resolver.LookupHost(lookupCtx, host)
+		if err != nil || len(addrs) == 0 {
+			http.Error(w, "Target domain does not exist or cannot be reached. Please check the URL.", http.StatusBadRequest)
+			return
+		}
 	}
 
 	req.URL = rawURL

@@ -43,8 +43,7 @@
 
 html {
     scroll-behavior: smooth;
-    overflow-x: hidden;
-    max-width: 100%;
+    overflow-x: clip;
 }
 
 body {
@@ -54,8 +53,7 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    overflow-x: hidden;
-    max-width: 100%;
+    overflow-x: clip;
     position: relative;
     -webkit-font-smoothing: antialiased;
 }
@@ -402,7 +400,8 @@ main.main-content {
     border-radius: var(--radius-lg);
     padding: 1.75rem;
     box-shadow: var(--shadow-card), var(--shadow-glow);
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-sizing: border-box;
 }
 
 .premium-card:hover {
@@ -585,30 +584,67 @@ main.main-content {
 .qr-section {
     display: flex;
     align-items: center;
-    gap: 1.5rem;
+    gap: 1.25rem;
     padding-top: 1.25rem;
     border-top: 1px solid var(--border-subtle);
+    flex-wrap: wrap;
 }
 
 .qr-code-img {
-    width: 76px;
-    height: 76px;
-    border-radius: 8px;
+    width: 84px;
+    height: 84px;
+    border-radius: 10px;
     background: white;
     padding: 0.35rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+    flex-shrink: 0;
+}
+
+.qr-info {
+    flex: 1;
+    min-width: 200px;
 }
 
 .qr-info h4 {
     font-size: 0.9rem;
     font-weight: 600;
     color: var(--text-primary);
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.2rem;
 }
 
 .qr-info p {
     font-size: 0.825rem;
     color: var(--text-secondary);
+    margin: 0;
+}
+
+.qr-actions {
+    display: flex;
+    gap: 0.4rem;
+    margin-top: 0.65rem;
+    flex-wrap: wrap;
+}
+
+.qr-btn {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+    border-radius: 6px;
+    padding: 0.35rem 0.65rem;
+    font-size: 0.775rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    transition: all 0.2s ease;
+}
+
+.qr-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: var(--border-hover);
+    color: #ffffff;
+    transform: translateY(-1px);
 }
 
 /* Feature Grid inspired by lazy.so */
@@ -991,14 +1027,9 @@ body.subpage main.main-content {
     margin: 1.5rem auto 2rem auto;
 }
 
+#shorten-btn,
 #unshorten-submit-btn {
-    min-width: 170px;
-    justify-content: center;
-    flex-shrink: 0;
-}
-
-#unshorten-submit-btn {
-    min-width: 170px;
+    min-width: 145px;
     justify-content: center;
     flex-shrink: 0;
 }
@@ -1006,13 +1037,7 @@ body.subpage main.main-content {
 #unshorten-submit-btn span,
 #shorten-btn span {
     display: inline-block;
-    transition: opacity 0.15s ease, transform 0.15s ease;
-}
-
-#unshorten-submit-btn span.is-changing,
-#shorten-btn span.is-changing {
-    opacity: 0;
-    transform: translateY(-2px);
+    transition: opacity 0.15s ease;
 }
 
 /* Keeps message space reserved and fades it rather than snapping */

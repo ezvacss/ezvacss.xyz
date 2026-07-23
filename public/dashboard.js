@@ -130,10 +130,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 datasets: [{
                     label: 'Clicks',
                     data: barData.length ? barData : [0],
-                    backgroundColor: '#a1a1aa',
-                    borderColor: '#a1a1aa',
-                    borderWidth: 1.5,
-                    borderRadius: 0,
+                    backgroundColor: '#6366f1',
+                    borderColor: '#4f46e5',
+                    borderWidth: 1,
+                    borderRadius: 6,
                 }]
             },
             options: {
@@ -145,12 +145,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 scales: {
                     y: {
                         beginAtZero: true,
-                        grid: { color: '#3f3f46' },
-                        ticks: { color: '#a1a1aa' }
+                        grid: { color: 'rgba(255, 255, 255, 0.08)' },
+                        ticks: { color: '#8e8e93' }
                     },
                     x: {
                         grid: { display: false },
-                        ticks: { color: '#a1a1aa' }
+                        ticks: { color: '#8e8e93' }
                     }
                 }
             }
@@ -180,9 +180,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 labels: ['Desktop', 'Mobile'],
                 datasets: [{
                     data: [desktopCount, mobileCount],
-                    backgroundColor: ['#e4e4e7', '#3f3f46'],
-                    borderColor: ['#27272a', '#27272a'],
-                    borderWidth: 1.5,
+                    backgroundColor: ['#6366f1', '#a855f7'],
+                    borderColor: ['#070709', '#070709'],
+                    borderWidth: 2,
                 }]
             },
             options: {
@@ -191,10 +191,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 plugins: {
                     legend: {
                         position: 'bottom',
-                        labels: { color: '#e4e4e7', boxWidth: 12 }
+                        labels: { color: '#f2f2f7', boxWidth: 12, padding: 15 }
                     }
                 },
-                cutout: '70%'
+                cutout: '72%'
             }
         });
     }

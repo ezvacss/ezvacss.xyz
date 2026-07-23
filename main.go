@@ -6,12 +6,17 @@ import (
 	"net/http"
 	"os"
 
-	"vibeCodingLinkShortener/db"
-	"vibeCodingLinkShortener/handlers"
-	"vibeCodingLinkShortener/middleware"
+	"ezvacss.xyz/db"
+	"ezvacss.xyz/handlers"
+	"ezvacss.xyz/middleware"
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	if err := godotenv.Load(); err != nil {
+		log.Println("No .env file found, using system environment variables")
+	}
+
 	// Initialize context
 	ctx := context.Background()
 
@@ -50,13 +55,13 @@ func main() {
 	// Root handler to catch all other paths (which should be static files or short codes)
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		path := r.URL.Path
-		
+
 		// Serve index.html for root
 		if path == "/" || path == "" {
 			http.ServeFile(w, r, "./public/index.html")
 			return
 		}
-		
+
 		// Redirect /dashboard -> /dashboard/
 		if path == "/dashboard" {
 			http.Redirect(w, r, "/dashboard/", http.StatusMovedPermanently)

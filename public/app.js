@@ -12,148 +12,241 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const errorMessage = document.getElementById('error-message');
     const errorMessageText = document.getElementById('error-message-text');
+    const isLocalDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+
+    // Global keyboard shortcut: Press '/' to focus input
+    window.addEventListener('keydown', (e) => {
+        const activeElem = document.activeElement;
+        const isTyping = activeElem && (activeElem.tagName === 'INPUT' || activeElem.tagName === 'TEXTAREA' || activeElem.isContentEditable);
+
+        if (!isTyping && e.key === '/') {
+            e.preventDefault();
+            const input = document.getElementById('url-input') || document.getElementById('code-input');
+            if (input) {
+                input.focus();
+                if (typeof input.select === 'function') input.select();
+                input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+    });
+
+    const captureLink = document.querySelector('.nav-link[data-section="capture"]');
+    if (captureLink) {
+        captureLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            history.pushState(null, '', '#capture');
+        });
+    }
+
+    const tryFreeBtn = document.getElementById('try-free-cta-btn');
+    if (tryFreeBtn) {
+        tryFreeBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const input = document.getElementById('url-input');
+            if (input) {
+                input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                input.focus();
+            }
+        });
+    }
+
+    const normalizePath = (p) => p.replace(/\/+$/, '') || '/';
+    const currentPath = normalizePath(window.location.pathname);
+
+    const footerLinks = document.querySelectorAll('.footer-links a');
+    footerLinks.forEach((link) => {
+        try {
+            const linkPath = normalizePath(new URL(link.href, window.location.origin).pathname);
+            if (linkPath === currentPath) {
+                link.classList.add('active-glow');
+            }
+        } catch (e) {}
+    });
+
+    const passwordField = document.getElementById('password') || document.getElementById('password-input');
+    const passwordConfirmField = document.getElementById('password-confirm');
+    const passwordMatchMsg = document.getElementById('password-match-msg');
+
+    if (passwordField && passwordConfirmField && passwordMatchMsg) {
+        function checkPasswordMatch() {
+            if (!passwordConfirmField.value) {
+                passwordMatchMsg.style.display = 'none';
+                return;
+            }
+            if (passwordField.value === passwordConfirmField.value) {
+                passwordMatchMsg.textContent = 'Passwords match';
+                passwordMatchMsg.style.color = 'var(--color-success)';
+            } else {
+                passwordMatchMsg.textContent = "Passwords don't match";
+                passwordMatchMsg.style.color = 'var(--color-danger)';
+            }
+            passwordMatchMsg.style.display = 'block';
+        }
+
+        passwordField.addEventListener('input', checkPasswordMatch);
+        passwordConfirmField.addEventListener('input', checkPasswordMatch);
+    }
 
     function showError(msg) {
-        if (errorMessage && errorMessageText) {
-            errorMessageText.textContent = msg;
-            errorMessage.style.display = 'block';
-        }
-        if (resultsBox) {
-            resultsBox.style.display = 'none';
-        }
+        if (!errorMessage) return;
+
+        errorMessage.textContent = msg;
+        errorMessage.classList.add('visible');
     }
 
     function hideError() {
-        if (errorMessage) {
-            errorMessage.style.display = 'none';
-        }
+        if (!errorMessage) return;
+
+        errorMessage.classList.remove('visible');
     }
 
-    
-    shortenForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        hideError();
-        
-        const originalUrl = urlInput.value.trim();
-        if (!originalUrl) return;
 
-        
-        let testStr = originalUrl;
-        if (!/^https?:\/\//i.test(testStr)) {
-            testStr = 'http://' + testStr;
-        }
-        let parsedUrl;
-        try {
-            parsedUrl = new URL(testStr);
-        } catch (_) {
-            showError('Please enter a valid URL (e.g. google.com).');
-            return;
-        }
+    if (shortenForm) {
+        shortenForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            hideError();
 
-        const host = parsedUrl.hostname.toLowerCase();
-        if (!host.includes('.') && host !== 'localhost') {
-            showError('Please enter a valid web address (e.g. google.com).');
-            return;
-        }
+            let buttonTextTimer;
 
-        if (host === window.location.hostname || host === 'ezvacss.xyz') {
-            showError('Cannot shorten links targeting our own domain.');
-            return;
-        }
+            function setButtonText(element, text) {
+                if (!element || element.textContent === text) return;
 
-        
-        const btnText = shortenBtn.querySelector('span');
-        const btnIcon = shortenBtn.querySelector('i');
-        const originalBtnText = btnText.textContent;
+                clearTimeout(buttonTextTimer);
+                element.classList.add('is-changing');
 
-        const captchaContainer = document.getElementById('captcha-container');
-        const isCaptchaVisible = captchaContainer && captchaContainer.style.display !== 'none';
-        const turnstileResponse = document.querySelector('[name="cf-turnstile-response"]');
-        const turnstileToken = turnstileResponse ? turnstileResponse.value : '';
-
-        if (isCaptchaVisible && !turnstileToken) {
-            showError('Please complete the captcha verification.');
-            return;
-        }
-
-        btnText.textContent = 'Shortening...';
-        shortenBtn.disabled = true;
-
-        try {
-            const response = await fetch('/shorten', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ 
-                    url: originalUrl,
-                    turnstile_token: turnstileToken
-                }),
-            });
-
-            if (!response.ok) {
-                const text = await response.text();
-                throw new Error(text || 'Failed to shorten URL');
+                buttonTextTimer = setTimeout(() => {
+                    element.textContent = text;
+                    element.classList.remove('is-changing');
+                }, 150);
             }
 
-            const data = await response.json();
-            
-            
-            originalUrlText.textContent = originalUrl;
-            shortenedUrlText.textContent = data.short_url;
-            shortenedUrlText.href = data.short_url;
+            const originalUrl = urlInput.value.trim();
+            if (!originalUrl) return;
 
-            
-            
-            const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(data.short_url)}`;
-            qrCodeImage.src = qrApiUrl;
 
-            
-            resultsBox.style.display = 'block';
-            resultsBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-
-            
-            urlInput.value = '';
-
-        } catch (error) {
-            console.error('Error:', error);
-            showError(error.message || 'Something went wrong. Please check your internet connection or try again.');
-            if (typeof turnstile !== 'undefined') {
-                turnstile.reset();
+            let testStr = originalUrl;
+            if (!/^https?:\/\//i.test(testStr)) {
+                testStr = 'http://' + testStr;
             }
-        } finally {
-            btnText.textContent = originalBtnText;
-            shortenBtn.disabled = false;
-            if (resultsBox && resultsBox.style.display === 'block' && typeof turnstile !== 'undefined') {
-                turnstile.reset();
+            let parsedUrl;
+            try {
+                parsedUrl = new URL(testStr);
+            } catch (_) {
+                showError('Please enter a valid URL (e.g. google.com).');
+                return;
             }
-        }
-    });
 
-    
-    copyUrlBtn.addEventListener('click', async () => {
-        const urlToCopy = shortenedUrlText.textContent;
-        try {
-            await navigator.clipboard.writeText(urlToCopy);
-            
-            
-            copyBtnIcon.setAttribute('data-lucide', 'check');
-            copyUrlBtn.style.borderColor = 'var(--color-success)';
-            copyUrlBtn.style.color = 'var(--color-success)';
-            lucide.createIcons();
+            const host = parsedUrl.hostname.toLowerCase();
+            if (!host.includes('.') && host !== 'localhost') {
+                showError('Please enter a valid web address (e.g. google.com).');
+                return;
+            }
 
-            setTimeout(() => {
-                copyBtnIcon.setAttribute('data-lucide', 'copy');
-                copyUrlBtn.style.borderColor = '';
-                copyUrlBtn.style.color = '';
+            if (host === window.location.hostname || host === 'ezvacss.xyz') {
+                showError('Cannot shorten links targeting our own domain.');
+                return;
+            }
+
+
+            const btnText = shortenBtn.querySelector('span');
+            const btnIcon = shortenBtn.querySelector('i');
+            const originalBtnText = btnText.textContent;
+
+            const captchaContainer = document.getElementById('captcha-container');
+            const isCaptchaVisible = captchaContainer && captchaContainer.style.display !== 'none';
+            const turnstileResponse = document.querySelector('[name="cf-turnstile-response"]');
+            const turnstileToken = turnstileResponse ? turnstileResponse.value : '';
+
+            if (isCaptchaVisible && !turnstileToken && !isLocalDev) {
+                showError('Please complete the captcha verification.');
+                return;
+            }
+
+            setButtonText(btnText, 'Shortening...');
+            shortenBtn.disabled = true;
+            shortenBtn.setAttribute('aria-busy', 'true');
+
+            try {
+                const response = await fetch('/shorten', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        url: originalUrl,
+                        turnstile_token: turnstileToken
+                    }),
+                });
+
+                if (!response.ok) {
+                    const text = await response.text();
+                    throw new Error(text || 'Failed to shorten URL');
+                }
+
+                const data = await response.json();
+
+
+                originalUrlText.textContent = originalUrl;
+                shortenedUrlText.textContent = data.short_url;
+                shortenedUrlText.href = data.short_url;
+
+
+                const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(data.short_url)}`;
+                qrCodeImage.src = qrApiUrl;
+
+
+                resultsBox.style.display = 'block';
+                resultsBox.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+
+
+                urlInput.value = '';
+
+            } catch (error) {
+                console.error('Error:', error);
+                showError(error.message || 'Something went wrong. Please check your internet connection or try again.');
+                if (typeof turnstile !== 'undefined') {
+                    turnstile.reset();
+                }
+            } finally {
+                setButtonText(btnText, originalBtnText);
+                shortenBtn.disabled = false;
+                shortenBtn.setAttribute('aria-busy', 'false');
+                if (resultsBox && resultsBox.style.display === 'block' && typeof turnstile !== 'undefined') {
+                    turnstile.reset();
+                }
+            }
+        });
+    }
+
+    if (urlInput) {
+        urlInput.addEventListener('input', hideError);
+    }
+
+    if (copyUrlBtn) {
+        copyUrlBtn.addEventListener('click', async () => {
+            const urlToCopy = shortenedUrlText.textContent;
+            try {
+                await navigator.clipboard.writeText(urlToCopy);
+
+
+                copyBtnIcon.setAttribute('data-lucide', 'check');
+                copyUrlBtn.style.borderColor = 'var(--color-success)';
+                copyUrlBtn.style.color = 'var(--color-success)';
                 lucide.createIcons();
-            }, 2000);
 
-        } catch (err) {
-            console.error('Failed to copy text: ', err);
-        }
-    });
+                setTimeout(() => {
+                    copyBtnIcon.setAttribute('data-lucide', 'copy');
+                    copyUrlBtn.style.borderColor = '';
+                    copyUrlBtn.style.color = '';
+                    lucide.createIcons();
+                }, 2000);
 
+            } catch (err) {
+                console.error('Failed to copy text: ', err);
+            }
+        });
+    }
     
     async function checkAuth() {
         const userDisplay = document.getElementById('user-display');
@@ -179,37 +272,52 @@ document.addEventListener('DOMContentLoaded', () => {
             if (res.ok) {
                 const user = await res.json();
                 if (user.authenticated) {
-                    userDisplay.textContent = `@${user.username}`;
-                    userDisplay.style.display = 'inline-block';
-                    dashboardLink.style.display = 'inline-block';
-                    logoutBtn.style.display = 'inline-block';
-                    authBtn.style.display = 'none';
+                    if (userDisplay) {
+                        userDisplay.textContent = `@${user.username}`;
+                        userDisplay.style.display = 'inline-block';
+                    }
+                    if (dashboardLink) dashboardLink.style.display = 'inline-block';
+                    if (logoutBtn) logoutBtn.style.display = 'inline-block';
+                    if (authBtn) authBtn.style.display = 'none';
                     if (registerBtn) registerBtn.style.display = 'none';
                     if (captchaContainer) captchaContainer.style.display = 'none';
                 } else {
-                    userDisplay.style.display = 'none';
-                    dashboardLink.style.display = 'none';
-                    logoutBtn.style.display = 'none';
-                    authBtn.style.display = 'inline-flex';
+                    if (userDisplay) userDisplay.style.display = 'none';
+                    if (dashboardLink) dashboardLink.style.display = 'none';
+                    if (logoutBtn) logoutBtn.style.display = 'none';
+                    if (authBtn) authBtn.style.display = 'inline-flex';
                     if (registerBtn) registerBtn.style.display = 'inline-flex';
                     if (captchaContainer) {
+                        if (isLocalDev) {
+                            captchaContainer.style.display = 'none';
+                        } else {
+                            captchaContainer.style.display = 'flex';
+                            loadTurnstileScript();
+                        }
+                    }
+                }
+            } else {
+                if (userDisplay) userDisplay.style.display = 'none';
+                if (dashboardLink) dashboardLink.style.display = 'none';
+                if (logoutBtn) logoutBtn.style.display = 'none';
+                if (authBtn) authBtn.style.display = 'inline-flex';
+                if (registerBtn) registerBtn.style.display = 'inline-flex';
+                if (captchaContainer) {
+                    if (isLocalDev) {
+                        captchaContainer.style.display = 'none';
+                    } else {
                         captchaContainer.style.display = 'flex';
                         loadTurnstileScript();
                     }
                 }
-            } else {
-                userDisplay.style.display = 'none';
-                dashboardLink.style.display = 'none';
-                logoutBtn.style.display = 'none';
-                authBtn.style.display = 'inline-flex';
-                if (registerBtn) registerBtn.style.display = 'inline-flex';
-                if (captchaContainer) {
-                    captchaContainer.style.display = 'flex';
-                    loadTurnstileScript();
-                }
             }
         } catch (err) {
             console.error('Auth check failed:', err);
+            if (userDisplay) userDisplay.style.display = 'none';
+            if (dashboardLink) dashboardLink.style.display = 'none';
+            if (logoutBtn) logoutBtn.style.display = 'none';
+            if (authBtn) authBtn.style.display = 'inline-flex';
+            if (registerBtn) registerBtn.style.display = 'inline-flex';
         } finally {
             const navMenuBar = document.getElementById('nav-menu-bar');
             if (navMenuBar) {

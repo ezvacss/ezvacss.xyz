@@ -10,8 +10,8 @@ import (
 	"strings"
 	"time"
 
-	"vibeCodingLinkShortener/db"
-	"vibeCodingLinkShortener/shortener"
+	"ezvacss.xyz/db"
+	"ezvacss.xyz/shortener"
 )
 
 type ShortenRequest struct {
@@ -98,7 +98,7 @@ func HandleShorten(w http.ResponseWriter, r *http.Request) {
 			"INSERT INTO urls (original_url, short_code) VALUES ($1, $2)",
 			req.URL, shortCode)
 	}
-	
+
 	if dbErr != nil {
 		log.Printf("Failed to insert URL: %v", dbErr)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
@@ -157,7 +157,7 @@ func HandleRedirect(w http.ResponseWriter, r *http.Request) {
 	var originalURL string
 	err := db.Pool.QueryRow(ctx,
 		"SELECT original_url FROM urls WHERE short_code = $1", shortCode).Scan(&originalURL)
-	
+
 	if err != nil {
 		// e.g. pgx.ErrNoRows
 		log.Printf("Short code not found: %s", shortCode)
@@ -445,10 +445,10 @@ func HandleUnshorten(w http.ResponseWriter, r *http.Request) {
 	var originalURL string
 	var createdAt time.Time
 
-	err := db.Pool.QueryRow(ctx, 
-		"SELECT original_url, created_at FROM urls WHERE short_code = $1", 
+	err := db.Pool.QueryRow(ctx,
+		"SELECT original_url, created_at FROM urls WHERE short_code = $1",
 		code).Scan(&originalURL, &createdAt)
-	
+
 	if err != nil {
 		http.Error(w, "Short URL not found", http.StatusNotFound)
 		return
@@ -556,10 +556,10 @@ func HandleReport(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Insert report into Postgres
-	_, err = db.Pool.Exec(ctx, 
-		"INSERT INTO reports (short_code, reason, reporter_name, reporter_email, report_type) VALUES ($1, $2, $3, $4, $5)", 
+	_, err = db.Pool.Exec(ctx,
+		"INSERT INTO reports (short_code, reason, reporter_name, reporter_email, report_type) VALUES ($1, $2, $3, $4, $5)",
 		code, req.Reason, req.ReporterName, req.ReporterEmail, req.ReportType)
-	
+
 	if err != nil {
 		log.Printf("Failed to insert report: %v", err)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)

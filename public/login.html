@@ -1,189 +1,198 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <!-- Google Tag Manager -->
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer','GTM-TKH7V64R');</script>
     <!-- End Google Tag Manager -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Sign in to your ezvacss.xyz account to track shortened links and view dashboard analytics.">
+    <meta name="description" content="Sign in to your ezvacss.xyz account to manage your shortened URLs.">
     <title>Sign In | ezvacss.xyz</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="apple-touch-icon" href="/favicon.png">
-    <link rel="stylesheet" href="/styles.css?v=2">
+    <link rel="stylesheet" href="/styles.css?v=3">
     <link rel="canonical" href="https://ezvacss.xyz/login/">
-    <meta property="og:title" content="Sign In | ezvacss.xyz">
-    <meta property="og:description" content="Sign in to your ezvacss.xyz account to track shortened links and view dashboard analytics.">
-    <meta property="og:url" content="https://ezvacss.xyz/login/">
-    <meta property="og:type" content="website">
-    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebPage",
-      "@id": "https://ezvacss.xyz/login/#webpage",
-      "url": "https://ezvacss.xyz/login/",
-      "name": "Sign In | ezvacss.xyz",
-      "description": "Sign in to your ezvacss.xyz account to track shortened links and view dashboard analytics.",
-      "isPartOf": {
-        "@type": "WebSite",
-        "@id": "https://ezvacss.xyz/#website",
-        "url": "https://ezvacss.xyz/",
-        "name": "ezvacss.xyz"
-      }
-    }
-    </script>
     <script defer src="/custom-js" data-website-id="4fce8844-a01f-46d3-97e4-e33d9ed40e5f" data-host-url="/custom-api"></script>
 </head>
-<body>
+<body class="subpage">
 
-    <header class="app-header">
-        <nav class="nav-container">
-            <a href="/" class="logo-link" id="logo-nav-link">
-                <i data-lucide="zap" class="logo-icon"></i>
-                <span class="logo-text">ezvacss.xyz</span>
-            </a>
-            <div class="nav-menu" id="nav-menu-bar">
+<!-- Header Navigation Bar -->
+<header class="app-header">
+    <nav class="nav-container">
+        <a href="/" class="logo-link" id="logo-nav-link">
+            <div class="logo-badge">
+                <i data-lucide="zap" style="width: 18px; height: 18px;"></i>
             </div>
-        </nav>
-    </header>
+            <span class="logo-text">ezvacss.xyz</span>
+        </a>
 
-    <main class="main-content" style="max-width: 450px; padding: 2rem 1.5rem;">
-        
-        <div class="premium-card" style="box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3); border-color: rgba(228, 228, 231, 0.15); padding: 2.5rem 2rem;">
-            
-            <h1 style="font-size: 1.75rem; font-weight: 800; text-transform: uppercase; margin-bottom: 0.5rem; letter-spacing: -0.03em; text-align: center;">Sign In</h1>
-            
-            <p style="color: var(--text-secondary); text-align: center; margin-bottom: 2rem; font-size: 0.9rem; line-height: 1.4;">
-                Sign in to manage your shortened links and view live analytics.
-            </p>
+        <div class="nav-center-links">
+            <a href="/#capture">Capture</a>
+            <a href="/#features">Features</a>
+            <a href="/#pioneers">Pioneers</a>
+        </div>
 
-            <form id="login-form" onsubmit="event.preventDefault();">
-                <div style="display: flex; flex-direction: column; gap: 1.25rem;">
-                    
-                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                        <label for="username-input" style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary);">Username</label>
-                        <div class="input-group">
-                            <div class="input-icon-wrapper">
-                                <i data-lucide="user" style="width: 1.1rem; height: 1.1rem; color: var(--text-secondary);"></i>
-                            </div>
-                            <input type="text" id="username-input" placeholder="Enter username" required autocomplete="username">
-                        </div>
-                    </div>
+        <div class="nav-menu" id="nav-menu-bar">
+            <span id="user-display" style="display: none; color: var(--text-secondary); font-size: 0.875rem; font-weight: 600;"></span>
+            <a href="/dashboard/" class="nav-item" id="dashboard-link" style="display: none;">Dashboard</a>
+            <button class="nav-item" id="logout-btn" style="display: none; background: transparent; border: none; cursor: pointer;">Logout</button>
+            <a href="/login/" class="nav-item active" id="auth-btn">Sign In</a>
+            <a href="/register/" class="nav-btn" id="register-nav-btn">Get Started</a>
+        </div>
+    </nav>
+</header>
 
-                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                        <label for="password-input" style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary);">Password</label>
-                        <div class="input-group">
-                            <div class="input-icon-wrapper">
-                                <i data-lucide="lock" style="width: 1.1rem; height: 1.1rem; color: var(--text-secondary);"></i>
-                            </div>
-                            <input type="password" id="password-input" placeholder="Enter password" required autocomplete="current-password">
-                        </div>
-                    </div>
+<!-- Main Auth Card -->
+<main class="main-content" style="max-width: 440px;">
+    <div class="auth-card">
+        <div class="auth-header">
+            <div class="hero-pill" style="margin-bottom: 0.75rem;">
+                <span class="cmd-badge">Access</span>
+                <span>Welcome back</span>
+            </div>
+            <h1>Sign in.</h1>
+            <p>Pick up where you left off — your links, stats, and settings are waiting.</p>
+        </div>
 
-                    <div style="display: flex; justify-content: center; margin: 0.5rem 0;">
-                        <div class="cf-turnstile" data-sitekey="0x4AAAAAADv9thFyPxyOl6-p" data-theme="dark"></div>
-                    </div>
+        <form id="login-form" onsubmit="event.preventDefault();">
+            <div class="form-group">
+                <label for="username-input">Username</label>
+                <input type="text" class="form-input" id="username-input" placeholder="Enter your username" required autocomplete="username">
+            </div>
 
-                    <div id="error-message" style="display: none; color: var(--color-danger); font-size: 0.9rem; font-weight: 600; line-height: 1.4;"></div>
+            <div class="form-group">
+                <label for="password-input">Password</label>
+                <input type="password" class="form-input" id="password-input" name="password" placeholder="Enter your password" required autocomplete="current-password">
+            </div>
 
-                    <button type="submit" class="nav-btn" id="login-submit-btn" style="justify-content: center; width: 100%; padding: 0.8rem;">
-                        <span>Sign In</span>
-                    </button>
+            <div id="turnstile-widget" style="display: flex; justify-content: center; margin: 1rem 0;"></div>
 
-                    <div style="text-align: center; margin-top: 1rem; font-size: 0.9rem;">
-                        <span style="color: var(--text-secondary);">Don't have an account? </span>
-                        <a href="/register/" style="color: var(--text-primary); font-weight: 700; text-decoration: none; border-bottom: 1px solid var(--text-primary); padding-bottom: 2px;">Create account</a>
-                    </div>
+            <div id="error-message" style="display: none; color: var(--color-danger); font-size: 0.875rem; font-weight: 500; margin-bottom: 1rem; text-align: center;"></div>
 
+            <button type="submit" class="auth-submit-btn" id="login-submit-btn">
+                <span>Sign In</span>
+            </button>
+
+            <div style="text-align: center; margin-top: 1.25rem; font-size: 0.875rem;">
+                <span style="color: var(--text-secondary);">Don't have an account? </span>
+                <a href="/register/" style="color: var(--accent-indigo); font-weight: 600; text-decoration: none;">Create one</a>
+            </div>
+        </form>
+    </div>
+</main>
+
+<!-- Footer -->
+<footer class="app-footer">
+    <div class="footer-container">
+        <div class="footer-top-row">
+            <div class="footer-logo-box">
+                <div class="logo-badge" style="width: 28px; height: 28px; border-radius: 8px;">
+                    <i data-lucide="zap" style="width: 16px; height: 16px;"></i>
                 </div>
-            </form>
+                <span class="footer-brand-title">ezvacss.xyz</span>
+            </div>
+            <div class="footer-social-links">
+                <a href="https://x.com/vovan_pivo" target="_blank" class="social-icon-btn" title="Twitter / X" aria-label="Twitter / X">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                    </svg>
+                </a>
+            </div>
         </div>
 
-        <!-- SEO Rich Information Section -->
-        <section class="info-section" style="margin-top: 3rem; border-top: 2px solid var(--card-border); padding-top: 2rem;">
-            <h2 style="font-size: 1.3rem; font-weight: 800; text-transform: uppercase; margin-bottom: 1rem; letter-spacing: -0.02em;">Access Your Shortener Dashboard</h2>
-            <p style="color: var(--text-secondary); line-height: 1.5; font-size: 0.9rem; margin-bottom: 1rem;">
-                Welcome back to ezvacss.xyz. Sign in using your registered credentials to access your link management interface. Once authenticated, your personal dashboard allows you to view aggregate redirection volume, analyze referrer logs, and monitor click statistics in real-time.
-            </p>
-            <p style="color: var(--text-secondary); line-height: 1.5; font-size: 0.9rem;">
-                Our shortening utility stores all redirection endpoints securely, ensuring visitors are routed without latency. Registered accounts have access to click logs and device categorization charts to improve link campaign optimization.
-            </p>
-        </section>
-    </main>
+        <div class="footer-divider"></div>
 
-    <footer class="app-footer">
-        <div style="display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
-            <a href="/unshorten/" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 600;">Unshorten Link</a>
-            <a href="/report/" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 600;">Report Abuse</a>
-            <a href="/contact/" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 600;">Contact</a>
-            <a href="/privacy/" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 600;">Privacy</a>
-            <a href="/tos/" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 600;">Terms</a>
+        <div class="footer-bottom-row">
+            <span>&copy; 2026 ezvacss.xyz. All rights reserved. Minimalist link utility.</span>
+            <div class="footer-links">
+                <a href="/unshorten/">Unshorten Link</a>
+                <a href="/report/">Report Abuse</a>
+                <a href="/contact/">Contact</a>
+                <a href="/privacy/">Privacy Policy</a>
+                <a href="/tos/">Terms of Service</a>
+            </div>
         </div>
-        <p>&copy; 2026 ezvacss.xyz. Minimalist link utility.</p>
-    </footer>
+    </div>
+</footer>
 
-    <script>
-        const loginForm = document.getElementById('login-form');
-        const usernameInput = document.getElementById('username-input');
-        const passwordInput = document.getElementById('password-input');
-        const errorMessage = document.getElementById('error-message');
-        const submitBtn = document.getElementById('login-submit-btn');
+<script>
+    const loginForm = document.getElementById('login-form');
+    const usernameInput = document.getElementById('username-input');
+    const passwordInput = document.getElementById('password-input');
+    const errorMessage = document.getElementById('error-message');
+    const submitBtn = document.getElementById('login-submit-btn');
+    const isLocalDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    const turnstileSitekey = isLocalDev
+        ? '1x00000000000000000000AA'
+        : '0x4AAAAAADv9thFyPxyOl6-p';
 
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            errorMessage.style.display = 'none';
+    function renderTurnstile() {
+        if (typeof turnstile !== 'undefined') {
+            turnstile.render('#turnstile-widget', {
+                sitekey: turnstileSitekey,
+                theme: 'dark'
+            });
+        } else {
+            setTimeout(renderTurnstile, 100);
+        }
+    }
+    renderTurnstile();
 
-            const username = usernameInput.value.trim();
-            const password = passwordInput.value;
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        errorMessage.style.display = 'none';
 
-            // Get Turnstile token
-            const turnstileResponse = document.querySelector('[name="cf-turnstile-response"]');
-            const turnstile_token = turnstileResponse ? turnstileResponse.value : '';
+        const username = usernameInput.value.trim();
+        const password = passwordInput.value;
 
-            if (!username || !password) return;
-            if (!turnstile_token) {
-                errorMessage.textContent = 'Please complete the captcha verification.';
-                errorMessage.style.display = 'block';
-                return;
+        const turnstileResponse = document.querySelector('[name="cf-turnstile-response"]');
+        const turnstile_token = turnstileResponse ? turnstileResponse.value : '';
+
+        if (!username || !password) return;
+        if (!turnstile_token && !isLocalDev) {
+            errorMessage.textContent = 'Please complete the captcha verification.';
+            errorMessage.style.display = 'block';
+            return;
+        }
+
+        const btnText = submitBtn.querySelector('span');
+        btnText.textContent = 'Authenticating...';
+        submitBtn.disabled = true;
+
+        try {
+            const response = await fetch('/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password, turnstile_token })
+            });
+
+            if (!response.ok) {
+                const text = await response.text();
+                throw new Error(text || 'Authentication failed');
             }
 
-            const btnText = submitBtn.querySelector('span');
-            btnText.textContent = 'Authenticating...';
-            submitBtn.disabled = true;
-
-            try {
-                const response = await fetch('/api/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, password, turnstile_token })
-                });
-
-                if (!response.ok) {
-                    const text = await response.text();
-                    throw new Error(text || 'Authentication failed');
-                }
-
-                window.location.href = '/dashboard';
-            } catch (err) {
-                errorMessage.textContent = err.message;
-                errorMessage.style.display = 'block';
-                if (typeof turnstile !== 'undefined') {
-                    turnstile.reset();
-                }
-            } finally {
-                btnText.textContent = 'Sign In';
-                submitBtn.disabled = false;
+            window.location.href = '/dashboard';
+        } catch (err) {
+            errorMessage.textContent = err.message;
+            errorMessage.style.display = 'block';
+            if (typeof turnstile !== 'undefined') {
+                turnstile.reset();
             }
-        });
-
-        lucide.createIcons();
-    </script>
+        } finally {
+            btnText.textContent = 'Sign In';
+            submitBtn.disabled = false;
+        }
+    });
+</script>
+<script src="/app.js"></script>
+<script>
+    lucide.createIcons();
+</script>
 </body>
 </html>
-

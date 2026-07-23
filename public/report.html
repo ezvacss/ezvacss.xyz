@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <!-- Google Tag Manager -->
@@ -14,139 +14,126 @@
     <title>Report Abuse & Malicious Links | ezvacss.xyz</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="apple-touch-icon" href="/favicon.png">
-    <link rel="stylesheet" href="/styles.css?v=2">
+    <link rel="stylesheet" href="/styles.css?v=3">
     <link rel="canonical" href="https://ezvacss.xyz/report/">
-    <meta property="og:title" content="Report Abuse & Malicious Links | ezvacss.xyz">
-    <meta property="og:description" content="Report malicious shortened links, phishing pages, spam, or malware links to ezvacss.xyz operations. Help keep the web safe.">
-    <meta property="og:url" content="https://ezvacss.xyz/report/">
-    <meta property="og:type" content="website">
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebPage",
-      "@id": "https://ezvacss.xyz/report/#webpage",
-      "url": "https://ezvacss.xyz/report/",
-      "name": "Report Abuse & Malicious Links | ezvacss.xyz",
-      "description": "Report malicious shortened links, phishing pages, spam, or malware links to ezvacss.xyz operations. Help keep the web safe.",
-      "isPartOf": {
-        "@type": "WebSite",
-        "@id": "https://ezvacss.xyz/#website",
-        "url": "https://ezvacss.xyz/",
-        "name": "ezvacss.xyz"
-      }
-    }
-    </script>
     <script defer src="/custom-js" data-website-id="4fce8844-a01f-46d3-97e4-e33d9ed40e5f" data-host-url="/custom-api"></script>
 </head>
-<body>
+<body class="subpage">
 
-    
+    <!-- Header Navigation Bar -->
     <header class="app-header">
         <nav class="nav-container">
             <a href="/" class="logo-link" id="logo-nav-link">
-                <i data-lucide="zap" class="logo-icon"></i>
+                <div class="logo-badge">
+                    <i data-lucide="zap" style="width: 18px; height: 18px;"></i>
+                </div>
                 <span class="logo-text">ezvacss.xyz</span>
             </a>
+            
+            <div class="nav-center-links">
+                <a href="/#capture">Capture</a>
+                <a href="/#features">Features</a>
+                <a href="/#pioneers">Pioneers</a>
+            </div>
+
             <div class="nav-menu" id="nav-menu-bar">
+                <a href="/" class="nav-btn">Back Home</a>
             </div>
         </nav>
     </header>
 
-    
+    <!-- Main Content -->
     <main class="main-content" style="max-width: 500px;">
-        <section class="hero-section">
-            <h1 class="hero-title" style="font-size: 2.5rem;">Report <span>Abuse</span></h1>
-            <p class="hero-subtitle">Flag malicious, phishing, or spam short links for review.</p>
-        </section>
-
-        <section class="premium-card">
-            <form id="report-form" onsubmit="event.preventDefault();">
-                <div style="display: flex; flex-direction: column; gap: 1.25rem;">
-                    
-                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                        <label for="code-input" style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary);">Short URL or Code</label>
-                        <div class="input-group">
-                            <input type="text" id="code-input" placeholder="e.g., eVyOGhR or https://ezvacss.xyz/eVyOGhR" required autocomplete="off">
-                        </div>
-                    </div>
-
-                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                        <label for="name-input" style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary);">Your Name (Optional)</label>
-                        <div class="input-group">
-                            <input type="text" id="name-input" placeholder="e.g., John Doe" autocomplete="off">
-                        </div>
-                    </div>
-
-                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                        <label for="email-input" style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary);">Your Email Address (Optional)</label>
-                        <div class="input-group">
-                            <input type="email" id="email-input" placeholder="e.g., john@example.com" autocomplete="off">
-                        </div>
-                    </div>
-
-                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                        <label for="type-select" style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary);">Abuse Type</label>
-                        <div class="input-group" style="padding: 0;">
-                            <select id="type-select" required style="width: 100%; background: transparent; border: none; outline: none; color: var(--text-primary); font-family: var(--font-sans); font-size: 1.05rem; padding: 1rem; -webkit-appearance: none; -moz-appearance: none; appearance: none;">
-                                <option value="phishing" style="background: var(--card-bg); color: var(--text-primary);">Phishing / Fraud</option>
-                                <option value="malware" style="background: var(--card-bg); color: var(--text-primary);">Malware / Virus</option>
-                                <option value="spam" style="background: var(--card-bg); color: var(--text-primary);">Spam / Ads</option>
-                                <option value="copyright" style="background: var(--card-bg); color: var(--text-primary);">Copyright / DMCA</option>
-                                <option value="other" style="background: var(--card-bg); color: var(--text-primary);">Other Abuse</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                        <label for="reason-input" style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary);">Reason for Report</label>
-                        <div class="input-group" style="padding: 0;">
-                            <textarea id="reason-input" placeholder="Please describe the abuse..." required style="width: 100%; min-height: 100px; background: transparent; border: none; outline: none; color: var(--text-primary); font-family: var(--font-sans); font-size: 1.05rem; padding: 1rem; resize: vertical;"></textarea>
-                        </div>
-                    </div>
-
-                    
-                    <div style="display: flex; justify-content: center; margin: 0.5rem 0;">
-                        <div class="cf-turnstile" data-sitekey="0x4AAAAAADv9thFyPxyOl6-p" data-theme="dark"></div>
-                    </div>
-
-                    <div id="error-message" style="display: none; color: var(--color-danger); font-size: 0.9rem; font-weight: 600;"></div>
-                    <div id="success-message" style="display: none; color: var(--color-success); font-size: 0.9rem; font-weight: 600;"></div>
-
-                    <button type="submit" class="nav-btn" id="report-submit-btn" style="justify-content: center; width: 100%; padding: 0.8rem;">
-                        <span>Submit Report</span>
-                    </button>
-
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="hero-pill" style="margin-bottom: 0.75rem;">
+                    <span class="cmd-badge">Safety</span>
+                    <span>Flag & Protect</span>
                 </div>
-            </form>
-        </section>
+                <h1>Caught a bad link?</h1>
+                <p>Report phishing, spam, or malware — we review every submission fast.</p>
+            </div>
 
-        <!-- SEO Rich Information Section -->
-        <section class="info-section" style="margin-top: 3rem; border-top: 2px solid var(--card-border); padding-top: 2rem;">
-            <h2 style="font-size: 1.3rem; font-weight: 800; text-transform: uppercase; margin-bottom: 1rem; letter-spacing: -0.02em;">Our Commitment to Web Safety</h2>
-            <p style="color: var(--text-secondary); line-height: 1.5; font-size: 0.9rem; margin-bottom: 1rem;">
-                At ezvacss.xyz, we take link safety and abuse prevention very seriously. While our platform is designed to provide clean, lightning-fast URL redirection, we strictly prohibit the use of our services to distribute harmful content. This includes phishing scams, financial fraud, malware downloads, unsolicited spam campaigns, and intellectual property violations.
-            </p>
-            <p style="color: var(--text-secondary); line-height: 1.5; font-size: 0.9rem; margin-bottom: 1rem;">
-                If you encounter a shortened link pointing to harmful resources, please report it immediately using the form above. Provide the short code (or full URL) along with a detailed description of the abuse type. Our operations team reviews every submission within 24 hours.
-            </p>
-            <p style="color: var(--text-secondary); line-height: 1.5; font-size: 0.9rem;">
-                Confirmed malicious links are permanently disabled, and the offending accounts are suspended. By filing detailed reports, you help us keep the internet safer for everyone.
-            </p>
-        </section>
+            <form id="report-form" onsubmit="event.preventDefault();">
+                <div class="form-group">
+                    <label for="code-input">Short URL or Code</label>
+                    <input type="text" class="form-input" id="code-input" placeholder="e.g. eVyOGhR or https://ezvacss.xyz/eVyOGhR" required autocomplete="off">
+                </div>
+
+                <div class="form-group">
+                    <label for="name-input">Your Name (Optional)</label>
+                    <input type="text" class="form-input" id="name-input" placeholder="e.g. Alex" autocomplete="off">
+                </div>
+
+                <div class="form-group">
+                    <label for="email-input">Your Email (Optional)</label>
+                    <input type="email" class="form-input" id="email-input" placeholder="e.g. alex@example.com" autocomplete="off">
+                </div>
+
+                <div class="form-group">
+                    <label for="type-select">Abuse Type</label>
+                    <select id="type-select" class="form-input" required>
+                        <option value="phishing" style="background: #141418;">Phishing / Fraud</option>
+                        <option value="malware" style="background: #141418;">Malware / Virus</option>
+                        <option value="spam" style="background: #141418;">Spam / Ads</option>
+                        <option value="copyright" style="background: #141418;">Copyright / DMCA</option>
+                        <option value="other" style="background: #141418;">Other Abuse</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="reason-input">Reason Details</label>
+                    <textarea id="reason-input" class="form-input" placeholder="Describe the violation..." required style="min-height: 90px; resize: vertical;"></textarea>
+                </div>
+
+                <div style="display: flex; justify-content: center; margin: 1rem 0;">
+                    <div class="cf-turnstile" data-sitekey="0x4AAAAAADv9thFyPxyOl6-p" data-theme="dark"></div>
+                </div>
+
+                <div id="error-message" style="display: none; color: var(--color-danger); font-size: 0.875rem; font-weight: 500; margin-bottom: 1rem; text-align: center;"></div>
+                <div id="success-message" style="display: none; color: var(--color-success); font-size: 0.875rem; font-weight: 500; margin-bottom: 1rem; text-align: center;"></div>
+
+                <button type="submit" class="auth-submit-btn" id="report-submit-btn">
+                    <span>Submit Report</span>
+                </button>
+            </form>
+        </div>
     </main>
 
-    
+    <!-- Footer -->
     <footer class="app-footer">
-        <div style="display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
-            <a href="/unshorten/" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 600;">Unshorten Link</a>
-            <a href="/report/" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 600;">Report Abuse</a>
-            <a href="/contact/" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 600;">Contact</a>
-            <a href="/privacy/" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 600;">Privacy</a>
-            <a href="/tos/" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 600;">Terms</a>
+        <div class="footer-container">
+            <div class="footer-top-row">
+                <div class="footer-logo-box">
+                    <div class="logo-badge" style="width: 28px; height: 28px; border-radius: 8px;">
+                        <i data-lucide="zap" style="width: 16px; height: 16px;"></i>
+                    </div>
+                    <span class="footer-brand-title">ezvacss.xyz</span>
+                </div>
+                <div class="footer-social-links">
+                    <a href="https://x.com/vovan_pivo" target="_blank" class="social-icon-btn" title="Twitter / X" aria-label="Twitter / X">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+                            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+
+            <div class="footer-divider"></div>
+
+            <div class="footer-bottom-row">
+                <span>&copy; 2026 ezvacss.xyz. All rights reserved. Minimalist link utility.</span>
+                <div class="footer-links">
+                    <a href="/unshorten/">Unshorten Link</a>
+                    <a href="/report/">Report Abuse</a>
+                    <a href="/contact/">Contact</a>
+                    <a href="/privacy/">Privacy Policy</a>
+                    <a href="/tos/">Terms of Service</a>
+                </div>
+            </div>
         </div>
-        <p>&copy; 2026 ezvacss.xyz. Minimalist link utility.</p>
     </footer>
 
     <script>
@@ -171,7 +158,6 @@
             const reporter_email = emailInput.value.trim();
             const report_type = typeSelect.value;
             
-            // Get Turnstile Captcha token
             const turnstileResponse = document.querySelector('[name="cf-turnstile-response"]');
             const turnstile_token = turnstileResponse ? turnstileResponse.value : '';
 
@@ -211,25 +197,20 @@
                 reasonInput.value = '';
                 nameInput.value = '';
                 emailInput.value = '';
-                
-                if (typeof turnstile !== 'undefined') {
-                    turnstile.reset();
-                }
+                if (typeof turnstile !== 'undefined') turnstile.reset();
             } catch (err) {
                 errorMessage.textContent = err.message;
                 errorMessage.style.display = 'block';
-                
-                if (typeof turnstile !== 'undefined') {
-                    turnstile.reset();
-                }
+                if (typeof turnstile !== 'undefined') turnstile.reset();
             } finally {
                 btnText.textContent = 'Submit Report';
                 submitBtn.disabled = false;
             }
         });
-
+    </script>
+    <script src="/app.js"></script>
+    <script>
         lucide.createIcons();
     </script>
 </body>
 </html>
-

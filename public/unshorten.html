@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <!-- Google Tag Manager -->
@@ -14,95 +14,90 @@
     <title>Unshorten URL & Link Safety Checker | ezvacss.xyz</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="apple-touch-icon" href="/favicon.png">
-    <link rel="stylesheet" href="/styles.css?v=2">
+    <link rel="stylesheet" href="/styles.css?v=3">
     <link rel="canonical" href="https://ezvacss.xyz/unshorten/">
-    <meta property="og:title" content="Unshorten URL & Link Safety Checker | ezvacss.xyz">
-    <meta property="og:description" content="Unshorten URL tool. Preview the original destination and creation date of any short link safely before redirecting. Protect yourself from scams.">
-    <meta property="og:url" content="https://ezvacss.xyz/unshorten/">
-    <meta property="og:type" content="website">
     <script src="https://unpkg.com/lucide@latest"></script>
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebPage",
-      "@id": "https://ezvacss.xyz/unshorten/#webpage",
-      "url": "https://ezvacss.xyz/unshorten/",
-      "name": "Unshorten URL & Link Safety Checker | ezvacss.xyz",
-      "description": "Unshorten URL tool. Preview the original destination and creation date of any short link safely before redirecting. Protect yourself from scams.",
-      "isPartOf": {
-        "@type": "WebSite",
-        "@id": "https://ezvacss.xyz/#website",
-        "url": "https://ezvacss.xyz/",
-        "name": "ezvacss.xyz"
-      }
-    }
-    </script>
     <script defer src="/custom-js" data-website-id="4fce8844-a01f-46d3-97e4-e33d9ed40e5f" data-host-url="/custom-api"></script>
 </head>
-<body>
+<body class="subpage">
 
-    
+    <!-- Header Navigation Bar -->
     <header class="app-header">
         <nav class="nav-container">
             <a href="/" class="logo-link" id="logo-nav-link">
-                <i data-lucide="zap" class="logo-icon"></i>
+                <div class="logo-badge">
+                    <i data-lucide="zap" style="width: 18px; height: 18px;"></i>
+                </div>
                 <span class="logo-text">ezvacss.xyz</span>
             </a>
-            <div class="nav-menu" id="nav-menu-bar" style="opacity: 0; transition: opacity 0.1s ease;">
-                <span id="user-display" style="display: none; color: var(--text-secondary); font-size: 0.9rem; font-weight: 600;"></span>
+            
+            <div class="nav-center-links">
+                <a href="/#capture">Capture</a>
+                <a href="/#features">Features</a>
+                <a href="/#pioneers">Pioneers</a>
+            </div>
+
+            <div class="nav-menu" id="nav-menu-bar">
+                <span id="user-display" style="display: none; color: var(--text-secondary); font-size: 0.875rem; font-weight: 600;"></span>
                 <a href="/dashboard/" class="nav-item" id="dashboard-link" style="display: none;">Dashboard</a>
                 <button class="nav-item" id="logout-btn" style="display: none; background: transparent; border: none; cursor: pointer;">Logout</button>
-                <a href="/login/" class="nav-item" id="auth-btn" style="display: none;">Sign In</a>
-                <a href="/register/" class="nav-btn" id="register-nav-btn" style="display: none;">Register</a>
+                <a href="/login/" class="nav-item" id="auth-btn">Sign In</a>
+                <a href="/register/" class="nav-btn" id="register-nav-btn">Get Started</a>
             </div>
         </nav>
     </header>
 
-    
-    <main class="main-content" style="max-width: 500px;">
+    <!-- Main Content -->
+    <main class="main-content" style="max-width: 600px;">
         <section class="hero-section">
-            <h1 class="hero-title" style="font-size: 2.5rem;">Unshorten <span>URL</span></h1>
-            <p class="hero-subtitle">Preview the destination of any short link safely before clicking it.</p>
+            <div class="hero-pill">
+                <span class="cmd-badge">Press /</span>
+                <span>Safely preview & inspect short links</span>
+            </div>
+            <h1 class="hero-title" style="font-size: 2.75rem;">
+                Inspect link <span class="gradient-text">destinations safely.</span>
+            </h1>
+            <p class="hero-subtitle" style="font-size: 1.05rem;">
+                Preview the real destination URL and creation timestamp before clicking unknown short links.
+            </p>
         </section>
 
         <section class="premium-card">
             <form id="unshorten-form" onsubmit="event.preventDefault();">
-                <div style="display: flex; flex-direction: column; gap: 1.25rem;">
-                    
-                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                        <label for="code-input" style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary);">Short URL or Code</label>
-                        <div class="input-group">
-                            <input type="text" id="code-input" placeholder="e.g., eVyOGhR or https://ezvacss.xyz/eVyOGhR" required autocomplete="off">
-                        </div>
+                <div class="input-group">
+                    <div class="input-icon-wrapper">
+                        <i data-lucide="link-2" style="width: 20px; height: 20px;"></i>
                     </div>
-
-                    
-                    <div id="captcha-container" style="display: none; justify-content: center; margin-top: 0.5rem;">
-                        <div class="cf-turnstile" data-sitekey="0x4AAAAAADv9thFyPxyOl6-p" data-theme="dark"></div>
-                    </div>
-
-                    <div id="error-message" style="display: none; color: var(--color-danger); font-size: 0.9rem; font-weight: 600;"></div>
-
-                    <button type="submit" class="nav-btn" id="unshorten-submit-btn" style="justify-content: center; width: 100%; padding: 0.8rem;">
-                        <span>Preview Destination</span>
+                    <input type="text" id="code-input" placeholder="Paste short URL or code (e.g. eVyOGhR)" required autocomplete="off">
+                    <button type="submit" class="submit-btn" id="unshorten-submit-btn">
+                        <span>Analyze</span>
+                        <i data-lucide="arrow-right" style="width: 16px; height: 16px;"></i>
                     </button>
-
                 </div>
+
+                <div id="captcha-container" style="display: none; justify-content: center; margin-top: 1rem;">
+                    <div class="cf-turnstile" data-sitekey="0x4AAAAAADv9thFyPxyOl6-p" data-theme="dark"></div>
+                </div>
+
+                <p id="error-message" role="alert"> style="min-height: 1.5rem; color: var(--color-danger); font-size: 0.875rem; font-weight: 500; margin-top: 0.75rem; text-align: center; visibility: hidden;"></p>
             </form>
 
-            
-            <div class="results-box" id="preview-result-container" style="margin-top: 1.5rem; display: none;">
-                <div class="result-card" style="border: 2px solid var(--text-secondary);">
+            <!-- Results Box -->
+            <div class="results-box" id="preview-result-container" style="margin-top: 1.5rem; visibility: hidden; min-height: 0;">
+                <div class="result-card">
                     <div class="result-header">
-                        <span class="result-title">Link Analysis Result</span>
-                        <i data-lucide="shield-alert" style="color: var(--color-warning);"></i>
+                        <span class="result-title">Analysis Result</span>
+                        <div style="display: flex; align-items: center; gap: 0.35rem; color: var(--color-success); font-size: 0.85rem; font-weight: 600;">
+                            <i data-lucide="shield-check" style="width: 16px; height: 16px;"></i>
+                            <span>Verified</span>
+                        </div>
                     </div>
 
                     <div class="result-urls">
                         <div>
-                            <span class="url-label">Destination URL</span>
+                            <span class="url-label">Resolved Destination</span>
                             <div class="url-value-container">
-                                <a href="#" target="_blank" class="url-value" id="destination-url-text" style="color: var(--color-success); font-weight: 700;">https://example.com</a>
+                                <a href="#" target="_blank" class="url-value" id="destination-url-text" style="color: var(--accent-indigo);">https://example.com</a>
                             </div>
                         </div>
 
@@ -113,40 +108,43 @@
                             </div>
                         </div>
                     </div>
-
-                    <div style="background: rgba(245, 158, 11, 0.05); border: 1px solid rgba(245, 158, 11, 0.2); padding: 1rem; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">
-                        <strong style="color: var(--color-warning); text-transform: uppercase; display: block; margin-bottom: 0.25rem;">Security Warning:</strong>
-                        Ensure you trust the destination domain above before visiting it. Do not input passwords or personal info if the site appears suspicious.
-                    </div>
                 </div>
             </div>
         </section>
-
-        <!-- SEO Rich Information Section -->
-        <section class="info-section" style="margin-top: 3rem; border-top: 2px solid var(--card-border); padding-top: 2rem;">
-            <h2 style="font-size: 1.3rem; font-weight: 800; text-transform: uppercase; margin-bottom: 1rem; letter-spacing: -0.02em;">Why should you unshorten links?</h2>
-            <p style="color: var(--text-secondary); line-height: 1.5; font-size: 0.9rem; margin-bottom: 1rem;">
-                Short URLs are incredibly useful for sharing links on social media platforms, emails, and SMS messages where character counts are restricted. However, they also pose a security risk because the actual destination domain is hidden from view. Scammers often use URL shorteners to mask malicious web pages, phishing campaigns, or malware downloads.
-            </p>
-            <p style="color: var(--text-secondary); line-height: 1.5; font-size: 0.9rem; margin-bottom: 1rem;">
-                Our <strong>Link Safety Checker</strong> solves this vulnerability by resolving the redirection route in a secure server-side environment. When you enter a short URL or code, we retrieve the full original web address and display its creation date. This allows you to inspect the domain and decide if it is safe to visit before clicking.
-            </p>
-            <p style="color: var(--text-secondary); line-height: 1.5; font-size: 0.9rem;">
-                Always verify the destination domain. If the link redirects to an unexpected domain or asks for login details, close the page immediately. You can report malicious shortened links using our abuse reporting form.
-            </p>
-        </section>
     </main>
 
-    
+    <!-- Footer -->
     <footer class="app-footer">
-        <div style="display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
-            <a href="/unshorten/" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 600;">Unshorten Link</a>
-            <a href="/report/" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 600;">Report Abuse</a>
-            <a href="/contact/" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 600;">Contact</a>
-            <a href="/privacy/" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 600;">Privacy</a>
-            <a href="/tos/" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 600;">Terms</a>
+        <div class="footer-container">
+            <div class="footer-top-row">
+                <div class="footer-logo-box">
+                    <div class="logo-badge" style="width: 28px; height: 28px; border-radius: 8px;">
+                        <i data-lucide="zap" style="width: 16px; height: 16px;"></i>
+                    </div>
+                    <span class="footer-brand-title">ezvacss.xyz</span>
+                </div>
+                <div class="footer-social-links">
+                    <a href="https://x.com/vovan_pivo" target="_blank" class="social-icon-btn" title="Twitter / X" aria-label="Twitter / X">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+                            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+
+            <div class="footer-divider"></div>
+
+            <div class="footer-bottom-row">
+                <span>&copy; 2026 ezvacss.xyz. All rights reserved. Minimalist link utility.</span>
+                <div class="footer-links">
+                    <a href="/unshorten/">Unshorten Link</a>
+                    <a href="/report/">Report Abuse</a>
+                    <a href="/contact/">Contact</a>
+                    <a href="/privacy/">Privacy Policy</a>
+                    <a href="/tos/">Terms of Service</a>
+                </div>
+            </div>
         </div>
-        <p>&copy; 2026 ezvacss.xyz. Minimalist link utility.</p>
     </footer>
 
     <script>
@@ -160,13 +158,11 @@
 
         unshortenForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            errorMessage.style.display = 'none';
-            previewContainer.style.display = 'none';
+            errorMessage.style.visibility = 'hidden';
 
             const code = codeInput.value.trim();
             if (!code) return;
 
-            // Get Turnstile Captcha token
             const captchaContainer = document.getElementById('captcha-container');
             const isCaptchaVisible = captchaContainer && captchaContainer.style.display !== 'none';
             const turnstileResponse = document.querySelector('[name="cf-turnstile-response"]');
@@ -174,7 +170,7 @@
 
             if (isCaptchaVisible && !turnstileToken) {
                 errorMessage.textContent = 'Please complete the captcha verification.';
-                errorMessage.style.display = 'block';
+                errorMessage.style.visibility = 'visible';
                 return;
             }
 
@@ -191,25 +187,40 @@
                 }
 
                 const data = await response.json();
-                
+
                 destinationUrlText.textContent = data.original_url;
                 destinationUrlText.href = data.original_url;
                 createdDateText.textContent = new Date(data.created_at).toLocaleString();
 
-                previewContainer.style.display = 'block';
+                previewContainer.style.visibility = 'visible';
             } catch (err) {
+                previewContainer.style.visibility = 'hidden';
                 errorMessage.textContent = err.message;
-                errorMessage.style.display = 'block';
-                
+                errorMessage.style.visibility = 'visible';
                 if (typeof turnstile !== 'undefined') {
                     turnstile.reset();
                 }
             } finally {
-                btnText.textContent = 'Preview Destination';
+                btnText.textContent = 'Analyze';
                 submitBtn.disabled = false;
-                
-                if (previewContainer.style.display === 'block' && typeof turnstile !== 'undefined') {
+                if (previewContainer.style.visibility === 'visible' && typeof turnstile !== 'undefined') {
                     turnstile.reset();
+                }
+            }
+        });
+
+        // Global keyboard shortcut: Press '/' to focus input
+        window.addEventListener('keydown', (e) => {
+            const activeElem = document.activeElement;
+            const isTyping = activeElem && (activeElem.tagName === 'INPUT' || activeElem.tagName === 'TEXTAREA' || activeElem.isContentEditable);
+
+            if (!isTyping && e.key === '/') {
+                e.preventDefault();
+                const input = document.getElementById('code-input') || document.getElementById('url-input');
+                if (input) {
+                    input.focus();
+                    if (typeof input.select === 'function') input.select();
+                    input.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }
             }
         });
@@ -225,7 +236,6 @@
             }
         }
 
-        // Navigation check and Captcha toggle logic
         async function checkAuth() {
             const userDisplay = document.getElementById('user-display');
             const dashboardLink = document.getElementById('dashboard-link');
@@ -291,10 +301,10 @@
                 }
             });
         }
-
-        checkAuth();
+    </script>
+    <script src="/app.js"></script>
+    <script>
         lucide.createIcons();
     </script>
 </body>
 </html>
-

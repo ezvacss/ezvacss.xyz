@@ -10,7 +10,7 @@ import (
 	"sync"
 	"time"
 
-	"vibeCodingLinkShortener/db"
+	"ezvacss.xyz/db"
 
 	"golang.org/x/crypto/bcrypt"
 )

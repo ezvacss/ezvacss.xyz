@@ -414,28 +414,32 @@ func HandleUnshorten(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Verify Turnstile Captcha for guest users (skip for registered/authenticated users)
+	// Verify Turnstile Captcha for guest users if token provided
 	userID := GetUserIDFromRequest(r)
 	if userID == 0 {
 		token := r.URL.Query().Get("turnstile_token")
-		ip := r.Header.Get("CF-Connecting-IP")
-		if ip == "" {
-			ip = r.Header.Get("X-Forwarded-For")
-		}
-		if ip == "" {
-			ip = r.RemoteAddr
-		}
-		ip = cleanIP(ip)
+		if token != "" {
+			ip := r.Header.Get("CF-Connecting-IP")
+			if ip == "" {
+				ip = r.Header.Get("X-Forwarded-For")
+			}
+			if ip == "" {
+				ip = r.RemoteAddr
+			}
+			ip = cleanIP(ip)
 
-		valid, err := VerifyTurnstileToken(token, ip)
-		if err != nil || !valid {
-			log.Printf("Captcha verification failed for unshorten: valid=%t, err=%v", valid, err)
-			http.Error(w, "Captcha verification failed. Please try again.", http.StatusBadRequest)
-			return
+			valid, err := VerifyTurnstileToken(token, ip)
+			if err != nil || !valid {
+				log.Printf("Captcha verification failed for unshorten: valid=%t, err=%v", valid, err)
+				http.Error(w, "Captcha verification failed. Please try again.", http.StatusBadRequest)
+				return
+			}
 		}
 	}
 
 	// Clean code if it's a full URL
+	code = strings.TrimSpace(code)
+	code = strings.TrimSuffix(code, "/")
 	if strings.Contains(code, "/") {
 		parts := strings.Split(code, "/")
 		code = parts[len(parts)-1]

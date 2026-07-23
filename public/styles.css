@@ -206,6 +206,8 @@ header.app-header {
     gap: 0.75rem;
     align-items: center;
     justify-self: end;
+    opacity: 0;
+    transition: opacity 0.15s ease;
 }
 
 .nav-item {
@@ -1222,5 +1224,44 @@ table.analytics-table td {
         justify-content: center;
         width: 100%;
         margin-top: 0.5rem;
+    }
+    body.subpage main.main-content {
+        min-height: calc(100vh - 100px);
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        padding-top: 6rem;
+    }
+
+    #unshorten-submit-btn {
+        min-width: 170px;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    #unshorten-submit-btn span {
+        transition: opacity 0.15s ease;
+    }
+
+    #error-message {
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.25s ease;
+    }
+
+    #error-message.visible {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .results-box {
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.25s ease;
+    }
+
+    .results-box.visible {
+        opacity: 1;
+        pointer-events: auto;
     }
 }

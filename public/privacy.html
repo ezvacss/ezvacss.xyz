@@ -37,8 +37,12 @@
                 <a href="/#pioneers">Pioneers</a>
             </div>
 
-            <div class="nav-menu" id="nav-menu-bar">
-                <a href="/" class="nav-btn">Back Home</a>
+            <div class="nav-menu" id="nav-menu-bar" style="opacity: 0;">
+                <span id="user-display" style="display: none; color: var(--text-secondary); font-size: 0.875rem; font-weight: 600;"></span>
+                <a href="/dashboard/" class="nav-item" id="dashboard-link" style="display: none;">Dashboard</a>
+                <button class="nav-item" id="logout-btn" style="display: none; background: transparent; border: none; cursor: pointer;">Logout</button>
+                <a href="/login/" class="nav-item" id="auth-btn" style="display: none;">Sign In</a>
+                <a href="/register/" class="nav-btn" id="register-nav-btn" style="display: none;">Get Started</a>
             </div>
         </nav>
     </header>
@@ -89,7 +93,7 @@
                     <span class="footer-brand-title">ezvacss.xyz</span>
                 </div>
                 <div class="footer-social-links">
-                    <a href="https://x.com/vovan_pivo" target="_blank" class="social-icon-btn" title="Twitter / X" aria-label="Twitter / X">
+                    <a href="https://x.com/ezvacss_xyz" target="_blank" class="social-icon-btn" title="Twitter / X" aria-label="Twitter / X">
                         <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
                             <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
                         </svg>

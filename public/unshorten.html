@@ -37,12 +37,12 @@
                 <a href="/#pioneers">Pioneers</a>
             </div>
 
-            <div class="nav-menu" id="nav-menu-bar">
+            <div class="nav-menu" id="nav-menu-bar" style="opacity: 0;">
                 <span id="user-display" style="display: none; color: var(--text-secondary); font-size: 0.875rem; font-weight: 600;"></span>
                 <a href="/dashboard/" class="nav-item" id="dashboard-link" style="display: none;">Dashboard</a>
                 <button class="nav-item" id="logout-btn" style="display: none; background: transparent; border: none; cursor: pointer;">Logout</button>
-                <a href="/login/" class="nav-item" id="auth-btn">Sign In</a>
-                <a href="/register/" class="nav-btn" id="register-nav-btn">Get Started</a>
+                <a href="/login/" class="nav-item" id="auth-btn" style="display: none;">Sign In</a>
+                <a href="/register/" class="nav-btn" id="register-nav-btn" style="display: none;">Get Started</a>
             </div>
         </nav>
     </header>
@@ -62,49 +62,51 @@
             </p>
         </section>
 
-        <section class="premium-card">
-            <form id="unshorten-form" onsubmit="event.preventDefault();">
-                <div class="input-group">
-                    <div class="input-icon-wrapper">
-                        <i data-lucide="link-2" style="width: 20px; height: 20px;"></i>
-                    </div>
-                    <input type="text" id="code-input" placeholder="Paste short URL or code (e.g. eVyOGhR)" required autocomplete="off">
-                    <button type="submit" class="submit-btn" id="unshorten-submit-btn">
-                        <span>Analyze</span>
-                        <i data-lucide="arrow-right" style="width: 16px; height: 16px;"></i>
-                    </button>
-                </div>
-
-                <div id="captcha-container" style="display: none; justify-content: center; margin-top: 1rem;">
-                    <div class="cf-turnstile" data-sitekey="0x4AAAAAADv9thFyPxyOl6-p" data-theme="dark"></div>
-                </div>
-
-                <p id="error-message" role="alert"> style="min-height: 1.5rem; color: var(--color-danger); font-size: 0.875rem; font-weight: 500; margin-top: 0.75rem; text-align: center; visibility: hidden;"></p>
-            </form>
-
-            <!-- Results Box -->
-            <div class="results-box" id="preview-result-container" style="margin-top: 1.5rem; visibility: hidden; min-height: 0;">
-                <div class="result-card">
-                    <div class="result-header">
-                        <span class="result-title">Analysis Result</span>
-                        <div style="display: flex; align-items: center; gap: 0.35rem; color: var(--color-success); font-size: 0.85rem; font-weight: 600;">
-                            <i data-lucide="shield-check" style="width: 16px; height: 16px;"></i>
-                            <span>Verified</span>
+        <section class="shortener-box">
+            <div class="premium-card">
+                <form id="unshorten-form" onsubmit="event.preventDefault();">
+                    <div class="input-group">
+                        <div class="input-icon-wrapper">
+                            <i data-lucide="link-2" style="width: 20px; height: 20px;"></i>
                         </div>
+                        <input type="text" id="code-input" placeholder="Paste short URL or code (e.g. eVyOGhR)" required autocomplete="off">
+                        <button type="submit" class="submit-btn" id="unshorten-submit-btn">
+                            <span>Analyze</span>
+                            <i data-lucide="arrow-right" style="width: 16px; height: 16px;"></i>
+                        </button>
                     </div>
 
-                    <div class="result-urls">
-                        <div>
-                            <span class="url-label">Resolved Destination</span>
-                            <div class="url-value-container">
-                                <a href="#" target="_blank" class="url-value" id="destination-url-text" style="color: var(--accent-indigo);">https://example.com</a>
+                    <div id="captcha-container" style="display: none; justify-content: center; margin-top: 1rem;">
+                        <div class="cf-turnstile" data-sitekey="0x4AAAAAADv9thFyPxyOl6-p" data-theme="dark"></div>
+                    </div>
+
+                    <p id="error-message" role="alert" style="min-height: 1.5rem; color: var(--color-danger); font-size: 0.875rem; font-weight: 500; margin-top: 0.75rem; text-align: center; display: none;"></p>
+                </form>
+
+                <!-- Results Box -->
+                <div class="results-box" id="preview-result-container" style="margin-top: 1.5rem; display: none; min-height: 0;">
+                    <div class="result-card">
+                        <div class="result-header">
+                            <span class="result-title">Analysis Result</span>
+                            <div style="display: flex; align-items: center; gap: 0.35rem; color: var(--color-success); font-size: 0.85rem; font-weight: 600;">
+                                <i data-lucide="shield-check" style="width: 16px; height: 16px;"></i>
+                                <span>Verified</span>
                             </div>
                         </div>
 
-                        <div>
-                            <span class="url-label">Created At</span>
-                            <div class="url-value-container">
-                                <span class="url-value original" id="created-date-text">July 4, 2026</span>
+                        <div class="result-urls">
+                            <div>
+                                <span class="url-label">Resolved Destination</span>
+                                <div class="url-value-container">
+                                    <a href="#" target="_blank" class="url-value" id="destination-url-text" style="color: var(--accent-indigo);">https://example.com</a>
+                                </div>
+                            </div>
+
+                            <div>
+                                <span class="url-label">Created At</span>
+                                <div class="url-value-container">
+                                    <span class="url-value original" id="created-date-text">July 4, 2026</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -124,7 +126,7 @@
                     <span class="footer-brand-title">ezvacss.xyz</span>
                 </div>
                 <div class="footer-social-links">
-                    <a href="https://x.com/vovan_pivo" target="_blank" class="social-icon-btn" title="Twitter / X" aria-label="Twitter / X">
+                    <a href="https://x.com/ezvacss_xyz" target="_blank" class="social-icon-btn" title="Twitter / X" aria-label="Twitter / X">
                         <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
                             <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
                         </svg>
@@ -158,7 +160,8 @@
 
         unshortenForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            errorMessage.style.visibility = 'hidden';
+            errorMessage.style.display = 'none';
+            errorMessage.classList.remove('visible');
 
             const code = codeInput.value.trim();
             if (!code) return;
@@ -170,7 +173,8 @@
 
             if (isCaptchaVisible && !turnstileToken) {
                 errorMessage.textContent = 'Please complete the captcha verification.';
-                errorMessage.style.visibility = 'visible';
+                errorMessage.style.display = 'block';
+                errorMessage.classList.add('visible');
                 return;
             }
 
@@ -192,22 +196,32 @@
                 destinationUrlText.href = data.original_url;
                 createdDateText.textContent = new Date(data.created_at).toLocaleString();
 
-                previewContainer.style.visibility = 'visible';
+                previewContainer.style.display = 'block';
+                previewContainer.classList.add('visible');
             } catch (err) {
-                previewContainer.style.visibility = 'hidden';
-                errorMessage.textContent = err.message;
-                errorMessage.style.visibility = 'visible';
+                previewContainer.style.display = 'none';
+                previewContainer.classList.remove('visible');
+                errorMessage.textContent = err.message || 'Short URL not found';
+                errorMessage.style.display = 'block';
+                errorMessage.classList.add('visible');
                 if (typeof turnstile !== 'undefined') {
                     turnstile.reset();
                 }
             } finally {
                 btnText.textContent = 'Analyze';
                 submitBtn.disabled = false;
-                if (previewContainer.style.visibility === 'visible' && typeof turnstile !== 'undefined') {
+                if (previewContainer.classList.contains('visible') && typeof turnstile !== 'undefined') {
                     turnstile.reset();
                 }
             }
         });
+
+        if (codeInput) {
+            codeInput.addEventListener('input', () => {
+                errorMessage.style.display = 'none';
+                errorMessage.classList.remove('visible');
+            });
+        }
 
         // Global keyboard shortcut: Press '/' to focus input
         window.addEventListener('keydown', (e) => {
@@ -301,6 +315,8 @@
                 }
             });
         }
+
+        checkAuth();
     </script>
     <script src="/app.js"></script>
     <script>

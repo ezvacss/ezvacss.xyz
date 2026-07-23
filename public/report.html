@@ -38,8 +38,12 @@
                 <a href="/#pioneers">Pioneers</a>
             </div>
 
-            <div class="nav-menu" id="nav-menu-bar">
-                <a href="/" class="nav-btn">Back Home</a>
+            <div class="nav-menu" id="nav-menu-bar" style="opacity: 0;">
+                <span id="user-display" style="display: none; color: var(--text-secondary); font-size: 0.875rem; font-weight: 600;"></span>
+                <a href="/dashboard/" class="nav-item" id="dashboard-link" style="display: none;">Dashboard</a>
+                <button class="nav-item" id="logout-btn" style="display: none; background: transparent; border: none; cursor: pointer;">Logout</button>
+                <a href="/login/" class="nav-item" id="auth-btn" style="display: none;">Sign In</a>
+                <a href="/register/" class="nav-btn" id="register-nav-btn" style="display: none;">Get Started</a>
             </div>
         </nav>
     </header>
@@ -60,6 +64,7 @@
                 <div class="form-group">
                     <label for="code-input">Short URL or Code</label>
                     <input type="text" class="form-input" id="code-input" placeholder="e.g. eVyOGhR or https://ezvacss.xyz/eVyOGhR" required autocomplete="off">
+                    <div id="code-feedback" style="display: none; font-size: 0.8rem; font-weight: 500; margin-top: 0.4rem;"></div>
                 </div>
 
                 <div class="form-group">
@@ -70,6 +75,7 @@
                 <div class="form-group">
                     <label for="email-input">Your Email (Optional)</label>
                     <input type="email" class="form-input" id="email-input" placeholder="e.g. alex@example.com" autocomplete="off">
+                    <div id="email-feedback" style="display: none; font-size: 0.8rem; font-weight: 500; margin-top: 0.4rem; color: var(--color-danger);">Please enter a valid email address.</div>
                 </div>
 
                 <div class="form-group">
@@ -88,8 +94,8 @@
                     <textarea id="reason-input" class="form-input" placeholder="Describe the violation..." required style="min-height: 90px; resize: vertical;"></textarea>
                 </div>
 
-                <div style="display: flex; justify-content: center; margin: 1rem 0;">
-                    <div class="cf-turnstile" data-sitekey="0x4AAAAAADv9thFyPxyOl6-p" data-theme="dark"></div>
+                <div style="min-height: 70px; display: flex; justify-content: center; align-items: center; margin: 0.75rem 0 1rem 0;">
+                    <div id="turnstile-widget"></div>
                 </div>
 
                 <div id="error-message" style="display: none; color: var(--color-danger); font-size: 0.875rem; font-weight: 500; margin-bottom: 1rem; text-align: center;"></div>
@@ -113,7 +119,7 @@
                     <span class="footer-brand-title">ezvacss.xyz</span>
                 </div>
                 <div class="footer-social-links">
-                    <a href="https://x.com/vovan_pivo" target="_blank" class="social-icon-btn" title="Twitter / X" aria-label="Twitter / X">
+                    <a href="https://x.com/ezvacss_xyz" target="_blank" class="social-icon-btn" title="Twitter / X" aria-label="Twitter / X">
                         <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
                             <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
                         </svg>
@@ -146,6 +152,91 @@
         const errorMessage = document.getElementById('error-message');
         const successMessage = document.getElementById('success-message');
         const submitBtn = document.getElementById('report-submit-btn');
+        const codeFeedback = document.getElementById('code-feedback');
+        const emailFeedback = document.getElementById('email-feedback');
+
+        const isLocalDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        const turnstileSitekey = isLocalDev
+            ? '1x00000000000000000000AA'
+            : '0x4AAAAAADv9thFyPxyOl6-p';
+
+        function renderTurnstile() {
+            if (typeof turnstile !== 'undefined') {
+                turnstile.render('#turnstile-widget', {
+                    sitekey: turnstileSitekey,
+                    theme: 'dark'
+                });
+            } else {
+                setTimeout(renderTurnstile, 100);
+            }
+        }
+        renderTurnstile();
+
+        function validateEmail() {
+            const val = emailInput.value.trim();
+            if (!val) {
+                emailFeedback.style.display = 'none';
+                emailInput.style.borderColor = '';
+                return true;
+            }
+            const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+            if (isValid) {
+                emailFeedback.style.display = 'none';
+                emailInput.style.borderColor = 'var(--color-success)';
+            } else {
+                emailFeedback.textContent = 'Please enter a valid email address.';
+                emailFeedback.style.display = 'block';
+                emailInput.style.borderColor = 'var(--color-danger)';
+            }
+            return isValid;
+        }
+
+        emailInput.addEventListener('input', validateEmail);
+
+        let codeCheckTimeout = null;
+        async function verifyCodeExistence() {
+            let val = codeInput.value.trim();
+            if (!val) {
+                codeFeedback.style.display = 'none';
+                codeInput.style.borderColor = '';
+                return false;
+            }
+
+            if (val.includes('/')) {
+                val = val.replace(/\/+$/, '');
+                const parts = val.split('/');
+                val = parts[parts.length - 1];
+            }
+
+            codeFeedback.style.color = 'var(--text-secondary)';
+            codeFeedback.textContent = 'Checking link...';
+            codeFeedback.style.display = 'block';
+
+            try {
+                const res = await fetch(`/api/unshorten?code=${encodeURIComponent(val)}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    codeFeedback.style.color = 'var(--color-success)';
+                    codeFeedback.textContent = `✓ Link verified (${data.original_url})`;
+                    codeInput.style.borderColor = 'var(--color-success)';
+                    return true;
+                } else {
+                    codeFeedback.style.color = 'var(--color-danger)';
+                    codeFeedback.textContent = '✗ Short URL or code not found in database';
+                    codeInput.style.borderColor = 'var(--color-danger)';
+                    return false;
+                }
+            } catch (err) {
+                codeFeedback.style.display = 'none';
+                codeInput.style.borderColor = '';
+                return false;
+            }
+        }
+
+        codeInput.addEventListener('input', () => {
+            clearTimeout(codeCheckTimeout);
+            codeCheckTimeout = setTimeout(verifyCodeExistence, 400);
+        });
 
         reportForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -162,7 +253,14 @@
             const turnstile_token = turnstileResponse ? turnstileResponse.value : '';
 
             if (!code || !reason || !report_type) return;
-            if (!turnstile_token) {
+
+            if (reporter_email && !validateEmail()) {
+                errorMessage.textContent = 'Please enter a valid email address before submitting.';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            if (!turnstile_token && !isLocalDev) {
                 errorMessage.textContent = 'Please complete the captcha verification.';
                 errorMessage.style.display = 'block';
                 return;
@@ -197,6 +295,10 @@
                 reasonInput.value = '';
                 nameInput.value = '';
                 emailInput.value = '';
+                codeFeedback.style.display = 'none';
+                emailFeedback.style.display = 'none';
+                codeInput.style.borderColor = '';
+                emailInput.style.borderColor = '';
                 if (typeof turnstile !== 'undefined') turnstile.reset();
             } catch (err) {
                 errorMessage.textContent = err.message;

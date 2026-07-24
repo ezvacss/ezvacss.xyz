@@ -1,9 +1,9 @@
 package shortener
 
 import (
-	"math/rand"
+	"crypto/rand"
+	"math/big"
 	"strings"
-	"time"
 )
 
 const base62Chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
@@ -33,15 +33,19 @@ func Encode(num uint64) string {
 }
 
 // GenerateRandomCode generates a random base-62 code of a specific length
-// as an alternative to encoding an auto-incrementing ID.
+// using cryptographically secure pseudo-random number generator (crypto/rand).
 func GenerateRandomCode(length int) string {
-	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	var builder strings.Builder
-	
+	base := big.NewInt(int64(len(base62Chars)))
+
 	for i := 0; i < length; i++ {
-		idx := r.Intn(len(base62Chars))
-		builder.WriteByte(base62Chars[idx])
+		n, err := rand.Int(rand.Reader, base)
+		if err != nil {
+			builder.WriteByte(base62Chars[0])
+			continue
+		}
+		builder.WriteByte(base62Chars[n.Int64()])
 	}
-	
+
 	return builder.String()
 }

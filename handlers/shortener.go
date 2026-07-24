@@ -203,13 +203,9 @@ func cleanIP(ip string) string {
 		parts := strings.Split(ip, ",")
 		ip = strings.TrimSpace(parts[0])
 	}
-	if strings.Contains(ip, ":") && !strings.Contains(ip, "]") {
-		parts := strings.Split(ip, ":")
-		ip = parts[0]
-	}
-	if strings.HasPrefix(ip, "[") && strings.Contains(ip, "]") {
-		parts := strings.Split(ip, "]")
-		ip = strings.TrimPrefix(parts[0], "[")
+	host, _, err := net.SplitHostPort(ip)
+	if err == nil {
+		return host
 	}
 	return ip
 }

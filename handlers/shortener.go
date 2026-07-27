@@ -149,7 +149,9 @@ func HandleShorten(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(resp)
+	if err := json.NewEncoder(w).Encode(resp); err != nil {
+		log.Printf("Failed to encode response: %v", err)
+	}
 }
 
 // HandleRedirect handles GET requests to short codes and redirects to the original URL.
@@ -223,7 +225,11 @@ func ResolveIPLocation(ip string) string {
 		log.Printf("Failed to fetch geo IP: %v", err)
 		return ""
 	}
-	defer resp.Body.Close()
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			log.Printf("Failed to close response body: %v", err)
+		}
+	}()
 
 	if resp.StatusCode != http.StatusOK {
 		return ""
@@ -404,7 +410,9 @@ func HandleStats(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(resp)
+	if err := json.NewEncoder(w).Encode(resp); err != nil {
+		log.Printf("Failed to encode response: %v", err)
+	}
 }
 
 type UnshortenResponse struct {
@@ -476,7 +484,9 @@ func HandleUnshorten(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(resp)
+	if err := json.NewEncoder(w).Encode(resp); err != nil {
+		log.Printf("Failed to encode response: %v", err)
+	}
 }
 
 type ReportRequest struct {
@@ -504,7 +514,11 @@ func VerifyTurnstileToken(token, clientIP string) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			log.Printf("Failed to close response body: %v", err)
+		}
+	}()
 
 	var result struct {
 		Success    bool     `json:"success"`
@@ -585,7 +599,9 @@ func HandleReport(w http.ResponseWriter, r *http.Request) {
 	SendDetailedReportEmail(code, req.Reason, req.ReporterName, req.ReporterEmail, req.ReportType)
 
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(map[string]string{"message": "Report submitted successfully"})
+	if err := json.NewEncoder(w).Encode(map[string]string{"message": "Report submitted successfully"}); err != nil {
+		log.Printf("Failed to encode response: %v", err)
+	}
 }
 
 // BackfillLocations finds any logs with missing locations on server startup and resolves them.

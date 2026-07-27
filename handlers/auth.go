@@ -138,7 +138,9 @@ func HandleRegister(w http.ResponseWriter, r *http.Request) {
 	})
 
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(map[string]string{"message": "Registration successful"})
+	if err := json.NewEncoder(w).Encode(map[string]string{"message": "Registration successful"}); err != nil {
+		log.Printf("Failed to encode response: %v", err)
+	}
 }
 
 func HandleLogin(w http.ResponseWriter, r *http.Request) {
@@ -209,7 +211,9 @@ func HandleLogin(w http.ResponseWriter, r *http.Request) {
 	})
 
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(map[string]string{"message": "Login successful"})
+	if err := json.NewEncoder(w).Encode(map[string]string{"message": "Login successful"}); err != nil {
+		log.Printf("Failed to encode response: %v", err)
+	}
 }
 
 func HandleLogout(w http.ResponseWriter, r *http.Request) {
@@ -230,7 +234,9 @@ func HandleLogout(w http.ResponseWriter, r *http.Request) {
 	})
 
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(map[string]string{"message": "Logged out successfully"})
+	if err := json.NewEncoder(w).Encode(map[string]string{"message": "Logged out successfully"}); err != nil {
+		log.Printf("Failed to encode response: %v", err)
+	}
 }
 
 func HandleUser(w http.ResponseWriter, r *http.Request) {
@@ -242,9 +248,11 @@ func HandleUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	userID := GetUserIDFromRequest(r)
 	if userID == 0 {
-		json.NewEncoder(w).Encode(map[string]interface{}{
+		if err := json.NewEncoder(w).Encode(map[string]interface{}{
 			"authenticated": false,
-		})
+		}); err != nil {
+			log.Printf("Failed to encode response: %v", err)
+		}
 		return
 	}
 
@@ -252,17 +260,21 @@ func HandleUser(w http.ResponseWriter, r *http.Request) {
 	var username string
 	err := db.Pool.QueryRow(ctx, "SELECT username FROM users WHERE id = $1", userID).Scan(&username)
 	if err != nil {
-		json.NewEncoder(w).Encode(map[string]interface{}{
+		if err := json.NewEncoder(w).Encode(map[string]interface{}{
 			"authenticated": false,
-		})
+		}); err != nil {
+			log.Printf("Failed to encode response: %v", err)
+		}
 		return
 	}
 
-	json.NewEncoder(w).Encode(map[string]interface{}{
+	if err := json.NewEncoder(w).Encode(map[string]interface{}{
 		"authenticated": true,
 		"id":            userID,
 		"username":      username,
-	})
+	}); err != nil {
+		log.Printf("Failed to encode response: %v", err)
+	}
 }
 
 func GetUserIDFromRequest(r *http.Request) int {

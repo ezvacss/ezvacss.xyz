@@ -25,7 +25,7 @@ postgres/data/
 .env.production
 .env.development
 
-# terraform
+# Terraform
 
 .terraform/
 .terraform.lock.hcl.tmp

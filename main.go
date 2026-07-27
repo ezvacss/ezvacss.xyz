@@ -26,7 +26,9 @@ func main() {
 	if os.Getenv("DATABASE_URL") == "" {
 		log.Println("DATABASE_URL not set. Please set it before running the server.")
 		// We'll set a default for local testing if not set
-		os.Setenv("DATABASE_URL", "postgres://postgres:postgres@localhost:5432/linkshortener?sslmode=disable")
+		if err := os.Setenv("DATABASE_URL", "postgres://postgres:postgres@localhost:5432/linkshortener?sslmode=disable"); err != nil {
+			log.Printf("Failed to set DATABASE_URL: %v", err)
+		}
 	}
 
 	// Initialize database

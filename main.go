@@ -53,6 +53,7 @@ func main() {
 	mux.HandleFunc("/api/user", handlers.HandleUser)
 	mux.HandleFunc("/api/unshorten", handlers.HandleUnshorten)
 	mux.HandleFunc("/api/report", handlers.HandleReport)
+	mux.HandleFunc("/healthz", handlers.HealthCheck)
 
 	// Root handler to catch all other paths (which should be static files or short codes)
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {

@@ -1,6 +1,8 @@
 ezvacss.xyz {
     encode gzip zstd
     
+
+
     # Enforce HTTPS with HSTS
     header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
     
@@ -19,6 +21,16 @@ ezvacss.xyz {
             header_up Host cloud.umami.is
         }
     }
-    
-    reverse_proxy app:8080
+
+    handle /api/* {
+        reverse_proxy app:8080
+    }
+
+    handle /healtz {
+        reverse_porxy app:8080
+    }
+
+    handle {
+        reverse_proxy frotnend:80
+    }
 }

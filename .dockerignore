@@ -2,10 +2,11 @@
 .git
 .idea
 .vscode
+.gitignore
+.DS_Store
 
 # Ignore database data folder (Crucial!)
 postgres/data
-postgres/data/
 
 # Ignore local builds and binaries
 *.exe
@@ -14,3 +15,9 @@ test_build.exe
 
 # Ignore env files
 .env
+
+Dockerfile
+docker-compose1.yml
+.dockerignore
+
+README.md

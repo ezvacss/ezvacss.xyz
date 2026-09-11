@@ -31,23 +31,54 @@ services:
       - SENDER_EMAIL=${SENDER_EMAIL}
       - TURNSTILE_SECRET_KEY=${TURNSTILE_SECRET_KEY}
     volumes:
-      - "./public:/app/public"
+      - "./../../public:/app/public"
     depends_on:
       - postgres
 
-  caddy:
-    image: caddy:2.7-alpine
+  haproxy:
+    image: haproxy:3.3.14-alpine3.24
+    container_name: haproxy
     restart: unless-stopped
     ports:
       - "80:80"
       - "443:443"
+      - "8404:8404"
     volumes:
-      - "./Caddyfile:/etc/caddy/Caddyfile"
-      - "caddy_data:/data"
-      - "caddy_config:/config"
+      - ../haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+      - certs_data:/etc/haproxy/certs:ro
     depends_on:
-      - app
+      app:
+        condition: service_started
+      cert-init:
+        condition: service_completed_successfully
+
+  acme:
+    image: neilpang/acme.sh:3.1.4
+    container_name: acme
+    restart: unless-stopped
+    command: daemon
+    environment:
+      - DEPLOY_HAPROXY_HOT_RELOAD=yes
+    volumes:
+      - acme_data:/acme.sh
+      - certs_data:/etc/haproxy/certs
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  cert-init:
+    image: alpine/openssl:3.5.8
+    restart: "no"
+    volumes:
+      - certs_data:/etc/haproxy/certs
+    entrypoint: >
+      sh -c "
+      if [ ! -f /etc/haproxy/certs/certificate.pem ]; then
+        echo 'creating temporary certificate for haproxy boot...';
+        openssl req -x509 -nodes -days 1 -newkey rsa:2048 -subj '/CN=localhost' -keyout /tmp/key.pem -out /tmp/cert.pem;
+        cat /tmp/key.pem /tmp/cert.pem > /etc/haproxy/certs/certificate.pem;
+      fi
+      "
 
 volumes:
-  caddy_data:
-  caddy_config:
+  haproxy_data:
+  acme_data:
+  certs_data:

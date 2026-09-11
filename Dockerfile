@@ -8,7 +8,7 @@ RUN go mod download
 
 COPY . ./
 
-RUN CGO_ENABLED=0 GOOS=linux go build -o /main
+RUN CGO_ENABLED=0 GOOS=linux go build -o /main ./cmd/server
 
 #test
 FROM build-stage as run-test-stage
@@ -25,9 +25,13 @@ COPY --from=build-stage --chown=nonroot:nonroot /main /main
 
 USER nonroot
 
-EXPOSE 8080
+WORKDIR /app
+COPY --from=build-stage --chown=nonroto:nonroot /app/public ./public
+COPY --from=build-stage --chown=nonroto:nonroot /main ./main
+
+EXPOSE 5252
 
 HEALTHCHECK --interval=10s --timeout=3s --retries=3 \
-    CMD wget -qO- http://localhost:8080/healthz || exit 1
+    CMD wget -qO- http://localhost:5252/healthz || exit 1
 
-ENTRYPOINT ["/main"]
+ENTRYPOINT ["./main"]

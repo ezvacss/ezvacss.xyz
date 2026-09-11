@@ -9,7 +9,6 @@
 **/postgres/data
 
 # Ignore local builds and binaries
-*.exe
 test_build
 test_build.exe
 bin/

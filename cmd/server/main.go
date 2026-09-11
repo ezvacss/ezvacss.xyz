@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"os"
 
-	"ezvacss.xyz/db"
-	"ezvacss.xyz/handlers"
-	"ezvacss.xyz/middleware"
+	"ezvacss.xyz/internal/db"
+	handlers2 "ezvacss.xyz/internal/handlers"
+	"ezvacss.xyz/internal/middleware"
 	"github.com/joho/godotenv"
 )
 
@@ -39,21 +39,21 @@ func main() {
 	log.Println("Successfully connected to the database")
 
 	// Backfill missing log locations asynchronously
-	handlers.BackfillLocations()
+	handlers2.BackfillLocations()
 
 	// Set up router using standard library ServeMux
 	mux := http.NewServeMux()
 
 	// Register endpoints
-	mux.HandleFunc("/shorten", handlers.HandleShorten)
-	mux.HandleFunc("/api/stats", handlers.HandleStats)
-	mux.HandleFunc("/api/register", handlers.HandleRegister)
-	mux.HandleFunc("/api/login", handlers.HandleLogin)
-	mux.HandleFunc("/api/logout", handlers.HandleLogout)
-	mux.HandleFunc("/api/user", handlers.HandleUser)
-	mux.HandleFunc("/api/unshorten", handlers.HandleUnshorten)
-	mux.HandleFunc("/api/report", handlers.HandleReport)
-	mux.HandleFunc("/healthz", handlers.HealthCheck)
+	mux.HandleFunc("/shorten", handlers2.HandleShorten)
+	mux.HandleFunc("/api/stats", handlers2.HandleStats)
+	mux.HandleFunc("/api/register", handlers2.HandleRegister)
+	mux.HandleFunc("/api/login", handlers2.HandleLogin)
+	mux.HandleFunc("/api/logout", handlers2.HandleLogout)
+	mux.HandleFunc("/api/user", handlers2.HandleUser)
+	mux.HandleFunc("/api/unshorten", handlers2.HandleUnshorten)
+	mux.HandleFunc("/api/report", handlers2.HandleReport)
+	mux.HandleFunc("/healthz", handlers2.HealthCheck)
 
 	// Root handler to catch all other paths (which should be static files or short codes)
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -153,7 +153,7 @@ func main() {
 		}
 
 		// Otherwise, attempt to redirect
-		handlers.HandleRedirect(w, r)
+		handlers2.HandleRedirect(w, r)
 	})
 
 	// Wrap mux with logging middleware

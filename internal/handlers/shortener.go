@@ -11,8 +11,8 @@ import (
 	"strings"
 	"time"
 
-	"ezvacss.xyz/db"
-	"ezvacss.xyz/shortener"
+	"ezvacss.xyz/internal/db"
+	"ezvacss.xyz/internal/shortener"
 )
 
 type ShortenRequest struct {

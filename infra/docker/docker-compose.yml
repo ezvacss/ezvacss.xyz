@@ -16,7 +16,7 @@ services:
         max-size: 256m
 
   app:
-    build: .
+    build: ../..
     restart: unless-stopped
     ports:
       - "8080:8080"

@@ -15,19 +15,32 @@
 *.dylib
 test_build
 test_build.exe
+dist/
+bin/
 
 # Database data directories
 postgres/data/
+**/postgres/data
+*.db
 
 # Environment files
 .env
+.env.*
+!.env.example
 .env.local
 .env.production
 .env.development
 
+*.pem
+*.key
+*.crt
+*.csr
+
+infra/haproxy/certs/
+
 # Terraform
 
-.terraform/
+**/.terraform/
 .terraform.lock.hcl.tmp
 *.tfstate
 *.tfstate.*

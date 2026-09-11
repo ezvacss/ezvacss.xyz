@@ -10,7 +10,7 @@ import (
 	"sync"
 	"time"
 
-	"ezvacss.xyz/db"
+	"ezvacss.xyz/internal/db"
 
 	"golang.org/x/crypto/bcrypt"
 )

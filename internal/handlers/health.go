@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	"ezvacss.xyz/db"
+	"ezvacss.xyz/internal/db"
 )
 
 func HealthCheck(w http.ResponseWriter, r *http.Request) {

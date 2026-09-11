@@ -6,8 +6,13 @@ import (
 	"log"
 	"os"
 
+	_ "embed"
+
 	"github.com/jackc/pgx/v5/pgxpool"
 )
+
+//go:embed schema.sql
+var schemaSQL string
 
 var Pool *pgxpool.Pool
 
@@ -31,16 +36,11 @@ func InitDB(ctx context.Context) error {
 	}
 
 	// Read and execute schema.sql automatically to ensure tables exist
-	schema, err := os.ReadFile("db/schema.sql")
+	_, err = Pool.Exec(ctx, schemaSQL)
 	if err != nil {
-		log.Printf("Warning: db/schema.sql could not be read: %v", err)
-	} else {
-		_, err = Pool.Exec(ctx, string(schema))
-		if err != nil {
-			return fmt.Errorf("failed to execute schema.sql: %w", err)
-		}
-		log.Println("Database schema verified/created successfully")
+		return fmt.Errorf("failed to execute schema.sql: %w", err)
 	}
+	log.Println("Database schema verified/created successfully")
 
 	return nil
 }

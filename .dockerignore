@@ -5,19 +5,23 @@
 .gitignore
 .DS_Store
 
-# Ignore database data folder (Crucial!)
-postgres/data
+# Ignore database data folder
+**/postgres/data
 
 # Ignore local builds and binaries
 *.exe
 test_build
 test_build.exe
+bin/
+dist/
 
 # Ignore env files
 .env
+.env.*
 
-Dockerfile
-docker-compose1.yml
+Dockerfile*
+infra/
 .dockerignore
+.github
 
 README.md

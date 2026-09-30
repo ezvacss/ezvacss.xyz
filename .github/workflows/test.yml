@@ -18,6 +18,19 @@ jobs:
         run: go test -v ./...
       - name: Build docker image
         run: docker build -t ezvacss.xyz:ci .
+      - name: Run go vulnerability scan
+        run: |
+          go install golang.org/x/vuln/cmd/govulncheck@latest
+          govulncheck ./...
+      - name: Scan docker images
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: 'ezvacss.xyz:ci'
+          format: table
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
 
 permissions:
   contents: read

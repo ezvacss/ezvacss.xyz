@@ -15,7 +15,7 @@ FROM build-stage as run-test-stage
 RUN go test -v ./...
 
 #build release
-FROM alpine:3.23.5 AS build-release-stage
+FROM alpine:3.24.2 AS build-release-stage
 
 WORKDIR /
 

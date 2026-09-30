@@ -14,6 +14,12 @@ services:
       options:
         tag: "{{.ImageName}}|{{.Name}}"
         max-size: 256m
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
 
   app:
     build: ../..
@@ -33,7 +39,14 @@ services:
     volumes:
       - "./../../public:/app/public"
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/healthz || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
 
   haproxy:
     image: haproxy:3.3.14-alpine3.24
@@ -48,7 +61,7 @@ services:
       - certs_data:/etc/haproxy/certs:ro
     depends_on:
       app:
-        condition: service_started
+        condition: service_healthy
       cert-init:
         condition: service_completed_successfully
 

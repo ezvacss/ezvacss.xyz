@@ -1,4 +1,4 @@
-name: test.yml
+name: Tests and docker build
 on:
   push:
       branches: [ main, staging ]
@@ -10,9 +10,27 @@ jobs:
     name: Unit tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-go@v6
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
         with:
-          go-version: 1.26.5
+          go-version: 1.27.1
       - name: Run unit tests
         run: go test -v ./...
+      - name: Build docker image
+        run: docker build -t ezvacss.xyz:ci .
+      - name: Run go vulnerability scan
+        run: |
+          go install golang.org/x/vuln/cmd/govulncheck@latest
+          govulncheck ./...
+      - name: Scan docker images
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: 'ezvacss.xyz:ci'
+          format: table
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
+
+permissions:
+  contents: read

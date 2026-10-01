@@ -1,14 +1,14 @@
 name: Tests and docker build
 on:
   push:
-      branches: [ main, staging ]
+    branches: [ main, staging ]
   pull_request:
-      branches: [ main, staging ]
+    branches: [ main, staging ]
 
 jobs:
   test:
     name: Unit tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-go@v7

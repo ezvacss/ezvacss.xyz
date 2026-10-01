@@ -1,7 +1,7 @@
 name: Publish Docker image
 on:
   push:
-    branches: [ main, staging ]
+    branches: [ production, staging ]
   workflow_dispatch:
 
 env:
@@ -9,10 +9,27 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
+  test:
+    uses: ./.github/workflows/test.yml
+    permissions:
+      contents: read
+
+  lint:
+    uses: ./.github/workflows/lint.yml
+    permissions:
+      contents: read
+
+  security:
+    uses: ./.github/workflows/security.yml
+    permissions:
+      contents: read
+
   publish:
+    needs: [test, lint, security]
+    if: github.ref == 'refs/heads/staging' || github.ref == 'refs/heads/production'
+
     name: Build and publish image
     runs-on: ubuntu-24.04
-
     permissions:
       contents: read
       packages: write

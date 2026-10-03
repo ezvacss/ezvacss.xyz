@@ -68,3 +68,35 @@ jobs:
           subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           subject-digest: ${{ steps.push.outputs.digest }}
           push-to-registry: true
+
+  deploy-staging:
+    name: Deploy staging VPS
+    needs: publish
+    if: github.ref == 'refs/heads/staging'
+    runs-on: ubuntu-24.04
+    environment: staging
+
+    steps:
+      - name: Deploy through SSH
+        uses: appleboy/ssh-action@v1.2.5
+        with:
+          host: ${{ secrets.STAGING_HOST }}
+          username: ${{ secrets.STAGING_USER }}
+          key: ${{ secrets.STAGING_SSH_KEY }}
+          script: |
+            cd ~/ezvacss.xyz
+
+            docker compose \
+              --env-file .env \
+              -f infra/docker/docker-compose.staging.yml \
+              pull app
+
+            docker compose \
+              --env-file .env \
+              -f infra/docker/docker-compose.staging.yml \
+              up -d --no-build --wait --wait-timeout 60 app
+
+      - name: Smoke test
+        run: |
+          curl -fsS --retry 5 --retry-delay 3 \
+            https://staging.ezvacss.xyz/healthz

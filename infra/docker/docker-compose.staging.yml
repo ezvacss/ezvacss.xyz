@@ -2,18 +2,11 @@ services:
   postgres:
     image: postgres:17.5
     restart: unless-stopped
-    ports:
-      - "5432:5432"
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: root
     volumes:
-      - "./postgres/data:/var/lib/postgresql/data"
-    logging:
-      driver: "json-file"
-      options:
-        tag: "{{.ImageName}}|{{.Name}}"
-        max-size: 256m
+      - ../../postgres/data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
       interval: 10s
@@ -22,23 +15,18 @@ services:
       start_period: 10s
 
   app:
-    image: "${APP_IMAGE:-ezvacss.xyz:local}"
-    build: ../..
+    image: "${APP_IMAGE:?APP_IMAGE must be set}"
     restart: unless-stopped
-    ports:
-      - "8080:8080"
     environment:
-      - DATABASE_URL=postgres://postgres:root@postgres:5432/postgres?sslmode=disable
-      - PORT=8080
-      - SMTP_HOST=${SMTP_HOST}
-      - SMTP_PORT=${SMTP_PORT}
-      - SMTP_USER=${SMTP_USER}
-      - SMTP_PASSWORD=${SMTP_PASSWORD}
-      - ADMIN_EMAIL=${ADMIN_EMAIL}
-      - SENDER_EMAIL=${SENDER_EMAIL}
-      - TURNSTILE_SECRET_KEY=${TURNSTILE_SECRET_KEY}
-    volumes:
-      - "./../../public:/app/public"
+      DATABASE_URL: "postgres://postgres:root@postgres:5432/postgres?sslmode=disable"
+      PORT: "8080"
+      SMTP_HOST: "${SMTP_HOST}"
+      SMTP_PORT: "${SMTP_PORT}"
+      SMTP_USER: "${SMTP_USER}"
+      SMTP_PASSWORD: "${SMTP_PASSWORD}"
+      ADMIN_EMAIL: "${ADMIN_EMAIL}"
+      SENDER_EMAIL: "${SENDER_EMAIL}"
+      TURNSTILE_SECRET_KEY: "${TURNSTILE_SECRET_KEY}"
     depends_on:
       postgres:
         condition: service_healthy
@@ -56,7 +44,7 @@ services:
     ports:
       - "80:80"
       - "443:443"
-      - "8404:8404"
+      - "127.0.0.1:8404:8404"
     volumes:
       - ../haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
       - certs_data:/etc/haproxy/certs:ro
@@ -72,7 +60,7 @@ services:
     restart: unless-stopped
     command: daemon
     environment:
-      - DEPLOY_HAPROXY_HOT_RELOAD=yes
+      DEPLOY_HAPROXY_HOT_RELOAD: "yes"
     volumes:
       - acme_data:/acme.sh
       - certs_data:/etc/haproxy/certs
@@ -87,12 +75,15 @@ services:
       sh -c "
       if [ ! -f /etc/haproxy/certs/certificate.pem ]; then
         echo 'creating temporary certificate for haproxy boot...';
-        openssl req -x509 -nodes -days 1 -newkey rsa:2048 -subj '/CN=localhost' -keyout /tmp/key.pem -out /tmp/cert.pem;
-        cat /tmp/key.pem /tmp/cert.pem > /etc/haproxy/certs/certificate.pem;
+        openssl req -x509 -nodes -days 1 -newkey rsa:2048
+        -subj '/CN=localhost'
+        -keyout /tmp/key.pem
+        -out /tmp/cert.pem;
+        cat /tmp/key.pem /tmp/cert.pem
+        > /etc/haproxy/certs/certificate.pem;
       fi
       "
 
 volumes:
-  haproxy_data:
   acme_data:
   certs_data:

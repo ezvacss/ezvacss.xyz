@@ -98,5 +98,5 @@ jobs:
 
       - name: Smoke test
         run: |
-          curl -fsS --retry 5 --retry-delay 3 \
+          curl -kfsS --retry 5 --retry-delay 3 \
             https://staging.ezvacss.xyz/healthz

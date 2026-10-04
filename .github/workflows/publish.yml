@@ -85,18 +85,13 @@ jobs:
           key: ${{ secrets.STAGING_SSH_KEY }}
           script: |
             cd ~/ezvacss.xyz
+            
+            git pull --ff-only origin staging
 
-            docker compose \
-              --env-file .env \
-              -f infra/docker/docker-compose.staging.yml \
-              pull app
+            docker compose --env-file .env -f infra/docker/docker-compose.staging.yml pull app
 
-            docker compose \
-              --env-file .env \
-              -f infra/docker/docker-compose.staging.yml \
-              up -d --no-build --wait --wait-timeout 60 app
+            docker compose --env-file .env -f infra/docker/docker-compose.staging.yml up -d --no-build --wait --wait-timeout 60 app
 
       - name: Smoke test
         run: |
-          curl -kfsS --retry 5 --retry-delay 3 \
-            https://staging.ezvacss.xyz/healthz
+          curl -kfsS --retry 5 --retry-delay 3 https://staging.ezvacss.xyz/healthz

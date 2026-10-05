@@ -39,17 +39,12 @@ postgres/data/
 infra/haproxy/certs/
 
 # Terraform
-
 **/.terraform/
-.terraform.lock.hcl.tmp
 *.tfstate
 *.tfstate.*
-*.tfstate.backup
 *.tfplan
 *.tfvars
 *.tfvars.json
-*.auto.tfvars
-*.auto.tfvars.json
+!*.tfvars.example
 crash.log
 crash.*.log
-!*.tfvars.example

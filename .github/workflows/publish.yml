@@ -80,7 +80,20 @@ jobs:
     runs-on: ubuntu-24.04
     environment: staging
 
+
     steps:
+      - name: Checkout deployment configuration
+        uses: actions/checkout@v7
+
+      - name: Upload deployment configuration
+        uses: appleboy/scp-action@v1
+        with:
+          host: ${{ secrets.STAGING_HOST }}
+          username: ${{ secrets.STAGING_USER }}
+          key: ${{ secrets.STAGING_SSH_KEY }}
+          source: "infra/docker/docker-compose.staging.yml,infra/haproxy/haproxy.cfg"
+          target: "~/ezvacss.xyz"
+
       - name: Deploy through SSH
         uses: appleboy/ssh-action@v1.2.5
         with:
@@ -91,7 +104,6 @@ jobs:
             set -eu
             
             cd ~/ezvacss.xyz
-            git pull --ff-only origin staging
 
             docker compose --env-file .env -f infra/docker/compose-compose.staging.yml config --quiet
             

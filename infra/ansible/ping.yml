@@ -1,0 +1,7 @@
+- name: Verify stating VPS access
+  hosts: staging
+  gather_facts: false
+
+  tasks:
+    - name: Check Ansible connection
+      ansible.builtin.ping:

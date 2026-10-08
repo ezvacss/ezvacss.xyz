@@ -1,0 +1,59 @@
+- name: Install Docker CE on Ubuntu
+  hosts: staging
+  become: true
+  gather_facts: true
+
+  tasks:
+    - name: Read installed packages
+      ansible.builtin.package_facts:
+        manager: auto
+
+    - name: Check for conflicting packages
+      ansible.builtin.assert:
+        that:
+          - item not in ansible_facts.packages
+        fail_msg: "Conflicting package {{ item }} is installed, migration is required"
+      loop:
+        - docker.io
+        - docker-compose
+        - docker-compose-v2
+        - docker-doc
+        - docker-buildx
+        - podman-docker
+        - containerd
+        - runc
+
+    - name: Install repository prerequisites
+      ansible.builtin.apt:
+        name:
+          - ca-certificates
+          - python3-debian
+        state: present
+        update_cache: true
+
+    - name: Configure Docker repository
+      ansible.builtin.deb822_repository:
+        name: docker
+        types: deb
+        uris: https://download.docker.com/linux/ubuntu
+        suites: "{{ ansible_facts.distribution_release }}"
+        components: stable
+        signed_by: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Install Docker packages
+      ansible.builtin.apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-buildx-plugin
+          - docker-compose-plugin
+        state: present
+        update_cache: true
+
+    - name: Enable and start Docker
+      ansible.builtin.service:
+        name: docker
+        state: started
+        enabled: true

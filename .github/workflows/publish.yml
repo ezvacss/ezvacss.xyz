@@ -106,7 +106,7 @@ jobs:
             
             cd ~/ezvacss.xyz
 
-            docker compose --env-file .env -f infra/docker/compose-compose.staging.yml config --quiet
+            docker compose --env-file .env -f infra/docker/docker-compose.staging.yml config --quiet
             
             docker compose --env-file .env -f infra/docker/docker-compose.staging.yml pull app
 

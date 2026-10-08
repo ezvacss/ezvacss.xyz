@@ -93,6 +93,7 @@ jobs:
           key: ${{ secrets.STAGING_SSH_KEY }}
           source: "infra/docker/docker-compose.staging.yml,infra/haproxy/haproxy.cfg"
           target: "~/ezvacss.xyz"
+          overwrite: true
 
       - name: Deploy through SSH
         uses: appleboy/ssh-action@v1.2.5

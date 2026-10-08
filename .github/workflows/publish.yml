@@ -115,9 +115,9 @@ jobs:
       - name: Smoke test
         run: |
           curl -fsS \
-          --retry 5 
-          --retry-delay 3
-          --retry-connrefused
-          --connect-timeout 10
-          --max-time 20
+          --retry 5 \
+          --retry-delay 3 \
+          --retry-connrefused \
+          --connect-timeout 10 \
+          --max-time 20 \
           https://staging.ezvacss.xyz/healthz

@@ -39,6 +39,8 @@ jobs:
       packages: write
       attestations: write
       id-token: write
+    outputs:
+      image_digest: ${{ steps.push.outputs.digest }}
 
     steps:
       - name: Checkout repository
@@ -79,7 +81,8 @@ jobs:
     if: github.ref == 'refs/heads/staging'
     runs-on: ubuntu-24.04
     environment: staging
-
+    env:
+      APP_IMAGE: ghcr.io/${{ github.repository }}@${{ needs.publish.outputs.image_digest }}
 
     steps:
       - name: Checkout deployment configuration
@@ -103,6 +106,7 @@ jobs:
           key: ${{ secrets.STAGING_SSH_KEY }}
           script: |
             set -eu
+            export APP_IMAGE
             
             cd ~/ezvacss.xyz
 

@@ -52,13 +52,20 @@ services:
         condition: service_healthy
       cert-init:
         condition: service_completed_successfully
+    labels:
+      ezvacss.cert-target: staging
 
   acme:
     image: neilpang/acme.sh:3.1.4
     restart: unless-stopped
     command: daemon
     environment:
-      DEPLOY_HAPROXY_HOT_RELOAD: "yes"
+      DEPLOY_HAPROXY_PEM_PATH: /etc/haproxy/certs/
+      DEPLOY_HAPROXY_PEM_NAME: certificate.pem
+      DEPLOY_DOCKER_CONTAINER_LABEL: ezvacss.cert-target=staging
+      DEPLOY_DOCKER_CONTAINER_RELOAD_CMD: >-
+        haproxy -c -f /usr/local/etc/haproxy/haproxy.cfg &&
+        kill -USR2 1
     volumes:
       - acme_data:/acme.sh
       - certs_data:/etc/haproxy/certs

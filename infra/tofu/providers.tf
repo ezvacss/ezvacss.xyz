@@ -1,4 +1,12 @@
 terraform {
+  backend "s3" {
+    bucket       = "ezvacss.xyz-opentofu-state"
+    key          = "ezvacss.xyz/staging/terraform.tfstate"
+    region       = "eu-north-1"
+    encrypt      = true
+    use_lockfile = true
+  }
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"

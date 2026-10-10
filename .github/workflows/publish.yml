@@ -96,7 +96,27 @@ jobs:
           "$RUNNER_TEMP/ansible/bin/pip" install "ansible-core==2.20.0"
           echo "$RUNNER_TEMP/ansible/bin" >> "$GITHUB_PATH"
 
-      - name: Deploy using Anbisle
+      - name: Install Docker collection
+        run: ansible-galaxy collection install -r infra/ansible/requirements.yml
+
+      - name: Prepare SSH and inventory
+        env:
+          DEPLOY_HOST: ${{ secrets.STAGING_HOST }}
+          SSH_KEY: ${{ secrets.STAGING_KEY }}
+          KNOWN_HOSTS: ${{ secrets.STAGING_KNOWN_HOSTS }}
+        run: |
+          set -eu
+          test -n "$DEPLOY_HOST"
+          test -n "$SSH_KEY"
+          test -n "$KNOWN_HOSTS"
+          unmask 077
+          mkdir -p ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/staging_key
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+          printf '[staging]\nstaging-vps ansible_host=%s\n' \
+          "$DEPLOY_HOST" > "$RUNNER_TEMP/inventory.ini"
+
+      - name: Deploy using Ansible
         env:
           DEPLOY_USER: ${{ secrets.STAGING_USER }}
           ANSIBLE_HOST_KEY_CHECKING: "true"

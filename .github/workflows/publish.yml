@@ -102,14 +102,14 @@ jobs:
       - name: Prepare SSH and inventory
         env:
           DEPLOY_HOST: ${{ secrets.STAGING_HOST }}
-          SSH_KEY: ${{ secrets.STAGING_KEY }}
+          SSH_KEY: ${{ secrets.STAGING_SSH_KEY }}
           KNOWN_HOSTS: ${{ secrets.STAGING_KNOWN_HOSTS }}
         run: |
           set -eu
           test -n "$DEPLOY_HOST"
           test -n "$SSH_KEY"
           test -n "$KNOWN_HOSTS"
-          unmask 077
+          umask 077
           mkdir -p ~/.ssh
           printf '%s\n' "$SSH_KEY" > ~/.ssh/staging_key
           printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts

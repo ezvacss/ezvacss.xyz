@@ -1,0 +1,158 @@
+- name: Validate staging deployment
+  hosts: staging
+  gather_facts: false
+
+  vars:
+    deployment_dir: /home/ubuntu/ezvacss.xyz
+
+  environment:
+    APP_IMAGE: "{{ app_image | default('') }}"
+
+  tasks:
+    - name: Require an exact application image digest
+      ansible.builtin.assert:
+        that:
+          - app_image | default('') is match ('ghcr.io/ezvacss/ezvacss[.]xyz@sha256:[0-9a-f]{64}$')
+        fail_msg: "Supply app_image as ghcr.io/ezvacss/ezvacss.xyz@sha256:<full digest>."
+
+    - name: Inspect required deployment files
+      ansible.builtin.stat:
+        path: "{{ deployment_dir }}/{{ item }}"
+      loop:
+        - .env
+        - infra/docker/docker-compose.staging.yml
+        - infra/haproxy/haproxy.cfg
+      register: deployment_files
+
+    - name: Require regular files rather than directories
+      ansible.builtin.assert:
+        that:
+          - item.stat.exists
+          - item.stat.isreg | default(false)
+        fail_msg: "Missing file or incorrect file type: {{ item.item }}"
+      loop: "{{ deployment_files.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+
+    - name: Set deployment configuration directory ownership
+      become: true
+      ansible.builtin.file:
+        path: "{{ deployment_dir }}/infra/haproxy"
+        state: directory
+        owner: ubuntu
+        group: ubuntu
+        mode: "0755"
+
+    - name: Copy deployment configuration
+      ansible.builtin.copy:
+        src: "{{ playbook_dir }}/../../{{ item }}"
+        dest: "{{ deployment_dir }}/{{ item }}"
+        mode: "0644"
+        backup: true
+      loop:
+        - infra/docker/docker-compose.staging.yml
+        - infra/haproxy/haproxy.cfg
+
+    - name: Validate Docker Compose configuration
+      ansible.builtin.command:
+        argv:
+          - docker
+          - compose
+          - --env-file
+          - .env
+          - -f
+          - infra/docker/docker-compose.staging.yml
+          - config
+          - --quiet
+        chdir: "{{ deployment_dir }}"
+      changed_when: false
+
+    - name: Validate HAProxy configuration
+      ansible.builtin.command:
+        argv:
+          - docker
+          - compose
+          - --env-file
+          - .env
+          - -f
+          - infra/docker/docker-compose.staging.yml
+          - run
+          - --rm
+          - --no-deps
+          - --entrypoint
+          - haproxy
+          - haproxy
+          - -c
+          - -f
+          - /usr/local/etc/haproxy/haproxy.cfg
+        chdir: "{{ deployment_dir }}"
+      changed_when: false
+
+    - name: Deploy staging services
+      community.docker.docker_compose_v2:
+        project_src: "{{ deployment_dir }}/infra/docker"
+        project_name: docker
+        files:
+          - docker-compose.staging.yml
+        env_files:
+          - ../../.env
+        state: present
+        build: never
+        pull: always
+        recreate: auto
+        wait: true
+        wait_timeout: 120
+
+    - name: Calculate deployed HAProxy checksum
+      ansible.builtin.stat:
+        path: "{{ deployment_dir }}/infra/haproxy/haproxy.cfg"
+        checksum_algorithm: sha256
+      register: haproxy_host_config
+
+    - name: Calculate configuration checksum inside running HAProxy
+      ansible.builtin.command:
+        cmd: >-
+          docker compose
+          --env-file .env
+          -f infra/docker/docker-compose.staging.yml
+          exec -T haproxy
+          sha256sum /usr/local/etc/haproxy/haproxy.cfg
+        chdir: "{{ deployment_dir }}"
+      register: haproxy_container_config
+      changed_when: false
+
+    - name: Recreate HAProxy when configuration is outdated
+      community.docker.docker_compose_v2:
+        project_src: "{{ deployment_dir }}/infra/docker"
+        project_name: docker
+        files:
+          - docker-compose.staging.yml
+        env_files:
+          - ../../.env
+        services:
+          - haproxy
+        dependencies: false
+        state: present
+        build: never
+        pull: never
+        recreate: always
+        wait: true
+        wait_timeout: 60
+      when: >-
+        haproxy_host_config.stat.checksum != haproxy_container_config.stdout.split()[0]
+
+    - name: Verify public staging endpoint
+      ansible.builtin.uri:
+        url: "https://staging.ezvacss.xyz/healthz"
+        method: GET
+        status_code: 200
+        validate_certs: true
+        follow_redirects: none
+        timeout: 10
+      delegate_to: localhost
+      become: false
+      register: staging_health
+      until: staging_health.status | default(-1) == 200
+      retries: 5
+      delay: 3
+      changed_when: false

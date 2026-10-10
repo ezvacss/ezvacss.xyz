@@ -81,47 +81,31 @@ jobs:
     if: github.ref == 'refs/heads/staging'
     runs-on: ubuntu-24.04
     environment: staging
+    permissions:
+      contents: read
     env:
       APP_IMAGE: ghcr.io/${{ github.repository }}@${{ needs.publish.outputs.image_digest }}
 
     steps:
-      - name: Checkout deployment configuration
+      - name: Checkout repository
         uses: actions/checkout@v7
 
-      - name: Upload deployment configuration
-        uses: appleboy/scp-action@v1
-        with:
-          host: ${{ secrets.STAGING_HOST }}
-          username: ${{ secrets.STAGING_USER }}
-          key: ${{ secrets.STAGING_SSH_KEY }}
-          source: "infra/docker/docker-compose.staging.yml,infra/haproxy/haproxy.cfg"
-          target: "~/ezvacss.xyz"
-          overwrite: true
-
-      - name: Deploy through SSH
-        uses: appleboy/ssh-action@v1.2.5
-        with:
-          host: ${{ secrets.STAGING_HOST }}
-          username: ${{ secrets.STAGING_USER }}
-          key: ${{ secrets.STAGING_SSH_KEY }}
-          script: |
-            set -eu
-            export APP_IMAGE
-            
-            cd ~/ezvacss.xyz
-
-            docker compose --env-file .env -f infra/docker/docker-compose.staging.yml config --quiet
-            
-            docker compose --env-file .env -f infra/docker/docker-compose.staging.yml pull app
-
-            docker compose --env-file .env -f infra/docker/docker-compose.staging.yml up -d --no-build --wait --wait-timeout 60
-
-      - name: Smoke test
+      - name: Install Ansible
         run: |
-          curl -fsS \
-          --retry 5 \
-          --retry-delay 3 \
-          --retry-connrefused \
-          --connect-timeout 10 \
-          --max-time 20 \
-          https://staging.ezvacss.xyz/healthz
+          python3 -m venv "$RUNNER_TEMP/ansible"
+          "$RUNNER_TEMP/ansible/bin/pip" install "ansible-core==2.20.0"
+          echo "$RUNNER_TEMP/ansible/bin" >> "$GITHUB_PATH"
+
+      - name: Deploy using Anbisle
+        env:
+          DEPLOY_USER: ${{ secrets.STAGING_USER }}
+          ANSIBLE_HOST_KEY_CHECKING: "true"
+        run: |
+          test -n "$DEPLOY_USER"
+          ansible-playbook \
+            -i "$RUNNER_TEMP/inventory.ini" \
+            -u "$DEPLOY_USER" \
+            --private-key ~/.ssh/staging_key \
+            --ssh-common-args="-o BatchMode=yes -o StrictHostKeyChecking=yes" \
+            infra/ansible/deploy-staging.yml \
+            -e "app_image=$APP_IMAGE"

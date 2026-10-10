@@ -93,7 +93,7 @@ jobs:
       - name: Install Ansible
         run: |
           python3 -m venv "$RUNNER_TEMP/ansible"
-          "$RUNNER_TEMP/ansible/bin/pip" install "ansible-core==2.20.0"
+          "$RUNNER_TEMP/ansible/bin/pip" install -r infra/ansible/requirements.txt
           echo "$RUNNER_TEMP/ansible/bin" >> "$GITHUB_PATH"
 
       - name: Install Docker collection

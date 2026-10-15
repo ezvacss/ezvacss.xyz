@@ -50,7 +50,7 @@ services:
       start_period: 10s
 
   haproxy:
-    image: haproxy:3.4.6-alpine3.24
+    image: haproxy:3.4.7-alpine3.24
     container_name: haproxy
     restart: unless-stopped
     ports:

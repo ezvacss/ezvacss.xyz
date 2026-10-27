@@ -1,0 +1,15 @@
+#cloud-config
+ssh_pwauth: false
+
+write_files:
+  - path: /etc/ssh/sshd_config.d/00-ezvacss-hardening.conf
+    owner: root:root
+    permissions: "0644"
+    content: |
+      PasswordAuthentication no
+      KbdInteractiveAuthentication no
+      PermitRootLogin no
+      PubkeyAuthentication yes
+
+runcmd:
+  - [sh, -c, "/usr/sbin/sshd -t && systemctl reload ssh"]

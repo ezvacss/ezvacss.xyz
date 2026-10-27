@@ -1,0 +1,83 @@
+services:
+  app:
+    image: "${APP_IMAGE:?APP_IMAGE must be set}"
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: "${DATABASE_URL:?DATABASE_URL must be set}"
+      PORT: "8080"
+      SMTP_HOST: "${SMTP_HOST}"
+      SMTP_PORT: "${SMTP_PORT}"
+      SMTP_USER: "${SMTP_USER}"
+      SMTP_PASSWORD: "${SMTP_PASSWORD}"
+      ADMIN_EMAIL: "${ADMIN_EMAIL}"
+      SENDER_EMAIL: "${SENDER_EMAIL}"
+      TURNSTILE_SECRET_KEY: "${TURNSTILE_SECRET_KEY}"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/healthz || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+    volumes:
+      - type: bind
+        source: ../../certs/rds/eu-north-1-bundle.pem
+        target: /app/certs/rds-ca.pem
+        read_only: true
+        bind:
+          create_host_path: false
+
+  haproxy:
+    image: haproxy:3.3.14-alpine3.24
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "127.0.0.1:8404:8404"
+    volumes:
+      - ../haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+      - certs_data:/etc/haproxy/certs:ro
+    depends_on:
+      app:
+        condition: service_healthy
+      cert-init:
+        condition: service_completed_successfully
+    labels:
+      ezvacss.cert-target: staging
+
+  acme:
+    image: neilpang/acme.sh:3.1.4
+    restart: unless-stopped
+    command: daemon
+    environment:
+      DEPLOY_HAPROXY_PEM_PATH: /etc/haproxy/certs/
+      DEPLOY_HAPROXY_PEM_NAME: certificate.pem
+      DEPLOY_DOCKER_CONTAINER_LABEL: ezvacss.cert-target=staging
+      DEPLOY_DOCKER_CONTAINER_RELOAD_CMD: >-
+        haproxy -c -f /usr/local/etc/haproxy/haproxy.cfg &&
+        kill -USR2 1
+    volumes:
+      - acme_data:/acme.sh
+      - certs_data:/etc/haproxy/certs
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  cert-init:
+    image: alpine/openssl:3.5.9
+    restart: "no"
+    volumes:
+      - certs_data:/etc/haproxy/certs
+    entrypoint: >
+      sh -c "
+      if [ ! -f /etc/haproxy/certs/certificate.pem ]; then
+        echo 'creating temporary certificate for haproxy boot...';
+        openssl req -x509 -nodes -days 1 -newkey rsa:2048
+        -subj '/CN=localhost'
+        -keyout /tmp/key.pem
+        -out /tmp/cert.pem;
+        cat /tmp/key.pem /tmp/cert.pem
+        > /etc/haproxy/certs/certificate.pem;
+      fi
+      "
+
+volumes:
+  acme_data:
+  certs_data:

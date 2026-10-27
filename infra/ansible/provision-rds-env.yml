@@ -1,0 +1,22 @@
+- import_playbook: verify-database-secret.yml
+
+- name: Provision staging database connection settings
+  hosts: staging
+  become: true
+  gather_facts: false
+
+  vars:
+    deployment_dir: /home/ubuntu/ezvacss.xyz
+    database_credentials: "{{ hostvars['localhost'].database_credentials }}"
+
+  tasks:
+    - name: Write protected database environment file
+      ansible.builtin.template:
+        src: templates/rds.env.j2
+        dest: "{{ deployment_dir }}/.env.rds"
+        owner: ubuntu
+        group: ubuntu
+        mode: "0600"
+        backup: false
+      no_log: true
+      diff: false

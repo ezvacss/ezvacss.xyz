@@ -1,0 +1,42 @@
+- import_playbook: provision-rds-env.yml
+
+- name: Provision staging application settings
+  hosts: staging
+  become: true
+  gather_facts: false
+
+  vars:
+    deployment_dir: /home/ubuntu/ezvacss.xyz
+    app_env_keys:
+      - SMTP_HOST
+      - SMTP_PORT
+      - SMTP_USER
+      - SMTP_PASSWORD
+      - ADMIN_EMAIL
+      - SENDER_EMAIL
+      - TURNSTILE_SECRET_KEY
+
+  tasks:
+    - name: Read application settings
+      ansible.builtin.set_fact:
+        app_config: >-
+          {{
+            lookup(
+              'amazon.aws.secretsmanager_secret',
+              'ezvacss/staging/app-config',
+              region='eu-north-1',
+              profile='default',
+            ) | from_json
+          }}
+      no_log: true
+
+    - name: Write protected application environment file
+      ansible.builtin.template:
+        src: templates/app.env.j2
+        dest: "{{ deployment_dir }}/.env"
+        owner: ubuntu
+        group: ubuntu
+        mode: "0600"
+        backup: false
+      no_log: true
+      diff: false

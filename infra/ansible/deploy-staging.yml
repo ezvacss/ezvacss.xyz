@@ -1,6 +1,7 @@
 - name: Validate staging deployment
   hosts: staging
   gather_facts: false
+  become: true
 
   vars:
     deployment_dir: /home/ubuntu/ezvacss.xyz
@@ -20,7 +21,9 @@
         path: "{{ deployment_dir }}/{{ item }}"
       loop:
         - .env
-        - infra/docker/docker-compose.staging.yml
+        - .env.rds
+        - certs/rds/eu-north-1-bundle.pem
+        - infra/docker/docker-compose.staging-rds.yml
         - infra/haproxy/haproxy.cfg
       register: deployment_files
 
@@ -50,7 +53,7 @@
         mode: "0644"
         backup: true
       loop:
-        - infra/docker/docker-compose.staging.yml
+        - infra/docker/docker-compose.staging-rds.yml
         - infra/haproxy/haproxy.cfg
 
     - name: Validate Docker Compose configuration
@@ -60,8 +63,10 @@
           - compose
           - --env-file
           - .env
+          - --env-file
+          - .env.rds
           - -f
-          - infra/docker/docker-compose.staging.yml
+          - infra/docker/docker-compose.staging-rds.yml
           - config
           - --quiet
         chdir: "{{ deployment_dir }}"
@@ -74,8 +79,10 @@
           - compose
           - --env-file
           - .env
+          - --env-file
+          - .env.rds
           - -f
-          - infra/docker/docker-compose.staging.yml
+          - infra/docker/docker-compose.staging-rds.yml
           - run
           - --rm
           - --no-deps
@@ -93,9 +100,10 @@
         project_src: "{{ deployment_dir }}/infra/docker"
         project_name: docker
         files:
-          - docker-compose.staging.yml
+          - docker-compose.staging-rds.yml
         env_files:
           - ../../.env
+          - ../../.env.rds
         state: present
         build: never
         pull: always
@@ -114,7 +122,8 @@
         cmd: >-
           docker compose
           --env-file .env
-          -f infra/docker/docker-compose.staging.yml
+          --env-file .env.rds
+          -f infra/docker/docker-compose.staging-rds.yml
           exec -T haproxy
           sha256sum /usr/local/etc/haproxy/haproxy.cfg
         chdir: "{{ deployment_dir }}"
@@ -126,9 +135,10 @@
         project_src: "{{ deployment_dir }}/infra/docker"
         project_name: docker
         files:
-          - docker-compose.staging.yml
+          - docker-compose.staging-rds.yml
         env_files:
           - ../../.env
+          - ../../.env.rds
         services:
           - haproxy
         dependencies: false

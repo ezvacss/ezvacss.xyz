@@ -1,0 +1,43 @@
+- name: Prepare staging RDS deployment
+  hosts: staging
+  become: true
+  gather_facts: false
+
+  vars:
+    deployment_dir: /home/ubuntu/ezvacss.xyz
+
+  tasks:
+    - name: Create deployment directories
+      ansible.builtin.file:
+        path: "{{ deployment_dir }}/{{ item }}"
+        state: directory
+        owner: ubuntu
+        group: ubuntu
+        mode: "0755"
+      loop:
+        - .
+        - infra
+        - infra/docker
+        - infra/haproxy
+        - certs
+        - certs/rds
+
+    - name: Copy deployment configuration
+      ansible.builtin.copy:
+        src: "{{ playbook_dir }}/../../{{ item }}"
+        dest: "{{ deployment_dir }}/{{ item }}"
+        owner: ubuntu
+        group: ubuntu
+        mode: "0644"
+      loop:
+        - infra/docker/docker-compose.staging-rds.yml
+        - infra/haproxy/haproxy.cfg
+
+    - name: Download the RDS certificate bundle
+      ansible.builtin.get_url:
+        url: https://truststore.pki.rds.amazonaws.com/eu-north-1/eu-north-1-bundle.pem
+        dest: "{{ deployment_dir }}/certs/rds/eu-north-1-bundle.pem"
+        owner: ubuntu
+        group: ubuntu
+        mode: "0644"
+        validate_certs: true

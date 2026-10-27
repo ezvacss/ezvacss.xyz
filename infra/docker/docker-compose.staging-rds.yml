@@ -45,7 +45,7 @@ services:
       ezvacss.cert-target: staging
 
   acme:
-    image: neilpang/acme.sh:3.1.4
+    image: neilpang/acme.sh:3.1.6
     restart: unless-stopped
     command: daemon
     environment:

@@ -2,6 +2,8 @@ name: Publish Docker image
 on:
   push:
     branches: [ production, staging ]
+    paths-ignore:
+      - 'README.md'
   workflow_dispatch:
 
 concurrency:

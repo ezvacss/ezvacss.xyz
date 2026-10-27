@@ -8,8 +8,26 @@
   "prHourlyLimit": 1,
   "packageRules": [
     {
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true,
+      "automergeType": "pr"
+    },
+    {
       "matchUpdateTypes": ["major"],
+      "automerge": false,
       "dependencyDashboardApproval": true
+    },
+    {
+      "matchManagers": ["gomod"],
+      "matchDepNames": ["go"],
+      "matchDepTypes": ["golang"],
+      "rangeStrategy": "bump"
+    },
+    {
+      "matchManagers": ["gomod", "github-actions", "dockerfile"],
+      "matchDepNames": ["go", "golang"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "Go toolchain"
     }
   ]
 }

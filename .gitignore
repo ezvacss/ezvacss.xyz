@@ -37,6 +37,7 @@ postgres/data/
 *.csr
 
 infra/haproxy/certs/
+infra/ansible/inventory-new.ini
 
 # Terraform
 **/.terraform/

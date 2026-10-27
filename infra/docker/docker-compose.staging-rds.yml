@@ -27,7 +27,7 @@ services:
           create_host_path: false
 
   haproxy:
-    image: haproxy:3.3.14-alpine3.24
+    image: haproxy:3.4.7-alpine3.24
     restart: unless-stopped
     ports:
       - "80:80"

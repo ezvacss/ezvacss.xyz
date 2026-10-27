@@ -2,7 +2,8 @@
 
 [![Tests](https://github.com/ezvacss/ezvacss.xyz/actions/workflows/test.yml/badge.svg?branch=staging)](https://github.com/ezvacss/ezvacss.xyz/actions/workflows/test.yml?query=branch%3Astaging)
 [![Lint](https://github.com/ezvacss/ezvacss.xyz/actions/workflows/lint.yml/badge.svg?branch=staging)](https://github.com/ezvacss/ezvacss.xyz/actions/workflows/lint.yml?query=branch%3Astaging)
-[![Security](https://github.com/ezvacss/ezvacss.xyz/actions/workflows/security.yml/badge.svg?branch=staging)](https://github.com/ezvacss/ezvacss.xyz/actions/workflows/security.yml?query=branch%3Astaging)
+[![Security](https://github.com/ezvacss/ezvacss.xyz/actions/workflows/security.yml/badge.svg)](https://github.com/ezvacss/ezvacss.xyz/actions/workflows/security.yml)
+[![Staging Pipeline](https://github.com/ezvacss/ezvacss.xyz/actions/workflows/publish.yml/badge.svg?branch=staging&event=push)](https://github.com/ezvacss/ezvacss.xyz/actions/workflows/publish.yml)
 
 A Go and PostgreSQL URL shortener, with a vanilla JavaScript frontend and an AWS deployment managed through OpenTofu, Ansible, and GitHub Actions.
 

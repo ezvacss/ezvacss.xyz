@@ -1,2 +1,2 @@
 ansible-core==2.21.5
-boto3[crt]==1.43.122
+boto3[crt]==1.43.123

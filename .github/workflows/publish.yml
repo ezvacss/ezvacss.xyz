@@ -92,10 +92,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7
 
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.13'
+
       - name: Install Ansible
         run: |
-          python3 -m venv "$RUNNER_TEMP/ansible"
-          "$RUNNER_TEMP/ansible/bin/pip" install -r infra/ansible/requirements.txt
+          python --version
+          python -m venv "$RUNNER_TEMP/ansible"
+          "$RUNNER_TEMP/ansible/bin/python" -m pip install -r infra/ansible/requirements.txt
           echo "$RUNNER_TEMP/ansible/bin" >> "$GITHUB_PATH"
 
       - name: Install Docker collection

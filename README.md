@@ -219,8 +219,8 @@ The deploy job expects the server and runtime settings to have been provisioned 
 
 | Path | Purpose |
 | --- | --- |
-| `infra/tofu-new/bootstrap/` | State bucket, versioning, encryption, and public-access protection. |
-| `infra/tofu-new/staging/` | EC2, security groups, private database networking, and RDS. |
+| `infra/tofu/bootstrap` | State bucket, versioning, encryption, and public-access protection. |
+| `infra/tofu/staging` | EC2, security groups, private database networking, and RDS. |
 | `infra/tofu/` | Legacy infrastructure configuration retained during migration cleanup. |
 | `infra/ansible/bootstrap.yml` | Base server preparation and Docker CE installation. |
 | `infra/ansible/prepare-staging-rds.yml` | Deployment directories, configuration files, and RDS CA bundle. |
